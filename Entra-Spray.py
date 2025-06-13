@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(
     description=" Spray or test Microsoft login using username(s) and password(s).",
     epilog="Example usage:\n"
            "  python3 script.py -user users.txt -pass passwords.txt\n"
-           "  python3 script.py -user single@domain.com -pass 'Password123'\n",
+           "  python3 script.py -user username@fuck.com -pass 'Aa123456'\n",
     formatter_class=argparse.RawTextHelpFormatter
 )
 
