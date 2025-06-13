@@ -9,7 +9,7 @@ import os
 GREEN = "\033[92m"
 RED = "\033[91m"
 RESET = "\033[0m"
-
+YELLOW = "\033[93m"
 
 def load_list(input_str):
     if os.path.isfile(input_str):
@@ -203,7 +203,7 @@ for username in usernames:
         if '"IfExistsResult":0' in response.text:
             pass
         else:
-            print(f"{RED}[✗] Username: {username} not exists")
+            print(f"{RED}[✗] Username: {username} not exists{RESET}")
             continue
     
 
@@ -264,7 +264,7 @@ for username in usernames:
                     log_file.write(f"{username}:{password}\n")
                 break
             else:
-                print(f"{RED}[✗] FAIL: {username} exists, but password is incorrect: {password}")
+                print(f"{YELLOW}[✗] FAIL: {username} exists, but password is incorrect: {password}")
                 with open("valid-users.txt", "a") as log_file:
                     log_file.write(f"{username}\n")
 
