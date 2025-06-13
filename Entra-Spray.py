@@ -30,7 +30,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument("-user", required=True, help="Single username or path to usernames file (TXT)")
 parser.add_argument("-pass", dest="password", required=True, help="Single password or path to passwords file (TXT)")
-parser.add_argument("-check", action="store_true", help="Enable check mode (checking if Ideneity Exsits in Entra)")
+parser.add_argument("-check", action="store_true", help="Enable check mode (checking if Ideneity Exsits in Entra- May return a False Positive after multiple attempts )")
 
 args = parser.parse_args()
 
