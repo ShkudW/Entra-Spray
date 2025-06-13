@@ -84,8 +84,8 @@ for username in usernames:
             print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
         except httpx.RequestError as e:
             print(f"{RED}[✗] Request error: {e}{RESET}")
-        except Exception as e:
-            print(f"{RED}[✗] Unexpected error: {e}{RESET}")
+        except Exception:
+            print(f"{RED}[✗] Unexpected error occurred{RESET}")
 
 
         try:
@@ -118,8 +118,8 @@ for username in usernames:
             print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
         except httpx.RequestError as e:
             print(f"{RED}[✗] Request error: {e}{RESET}")
-        except Exception as e:
-            print(f"{RED}[✗] Unexpected error: {e}{RESET}")
+        except Exception:
+            print(f"{RED}[✗] Unexpected error occurred{RESET}")
 
 
         try: 
@@ -182,8 +182,8 @@ for username in usernames:
             print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
         except httpx.RequestError as e:
             print(f"{RED}[✗] Request error: {e}{RESET}")
-        except Exception as e:
-            print(f"{RED}[✗] Unexpected error: {e}{RESET}")
+        except Exception:
+            print(f"{RED}[✗] Unexpected error occurred{RESET}")
             
         
         try: 
@@ -223,8 +223,8 @@ for username in usernames:
                                 federation_url = response.json().get("FederationRedirectUrl")
                                 if federation_url:
                                     print(f"{BLUE}[!] Can not enumeration if username is exist {RESET}")
-                            except Exception as e:
-                                print(f"{RED}[✗] Failed to extract FederationRedirectUrl: {e}{RESET}")
+                            except Exception:
+                                print(f"{RED}[✗] Unexpected error occurred{RESET}")
                                 pass
 
                         if '"IfExistsResult":0' in response.text:
@@ -245,8 +245,8 @@ for username in usernames:
             print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
         except httpx.RequestError as e:
             print(f"{RED}[✗] Request error: {e}{RESET}")
-        except Exception as e:
-            print(f"{RED}[✗] Unexpected error: {e}{RESET}")
+        except Exception:
+            print(f"{RED}[✗] Unexpected error occurred{RESET}")
             
             
         try: 
@@ -328,9 +328,8 @@ for username in usernames:
             print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
         except httpx.RequestError as e:
             print(f"{RED}[✗] Request error: {e}{RESET}")
-        except Exception as e:
-            print(f"{RED}[✗] Unexpected error: {e}{RESET}")
+        except Exception:
+            print(f"{RED}[✗] Unexpected error occurred{RESET}")
         
          
 print(f"{BLUE} seccess Logs written to valid-users.txt {RESET}")
-
