@@ -265,6 +265,8 @@ for username in usernames:
                 break
             else:
                 print(f"{RED}[✗] FAIL: {username} exists, but password is incorrect: {password}")
+                with open("valid-users.txt", "a") as log_file:
+                    log_file.write(f"{username}\n")
 
             
 print(f"{RESET} seccess Logs written to valid-users.txt")
