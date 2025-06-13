@@ -64,7 +64,7 @@ for username in usernames:
                 "Priority": "u=0, i",
             }
 
-            with httpx.Client(http2=True, headers=headers1, follow_redirects=False) as client:
+            with httpx.Client(timeout=20, http2=True, headers=headers1, follow_redirects=False) as client:
                 response = client.get(url1)
                 cookies_dict = dict(response.cookies)
                 cookies_list = [{"name": name, "value": value} for name, value in cookies_dict.items()]
@@ -95,7 +95,7 @@ for username in usernames:
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
             }
             
-            with httpx.Client(follow_redirects=False, http2=True, headers=headers11) as client:
+            with httpx.Client(timeout=20, follow_redirects=False, http2=True, headers=headers11) as client:
                 
                 response = client.get(url11)
                 location = response.headers.get("location")
@@ -142,7 +142,7 @@ for username in usernames:
             }
 
 
-            with httpx.Client(http2=True, headers=headers2, follow_redirects=False) as client:
+            with httpx.Client(timeout=20, http2=True, headers=headers2, follow_redirects=False) as client:
                 response2 = client.get(url1)
                 cookies_dict2 = dict(response2.cookies)
                 cookies_list2 = [{"name": name, "value": value} for name, value in cookies_dict2.items()]
@@ -151,7 +151,7 @@ for username in usernames:
                     #print(f"varb created: cookie_url1{i} = {{'name': '{cookie2['name']}', 'value': '{cookie2['value']}'}}")
 
 
-            with httpx.Client(http2=True, headers=headers2, follow_redirects=False) as client:
+            with httpx.Client(timeout=20, http2=True, headers=headers2, follow_redirects=False) as client:
                 response3 = client.get(url2)
                 cookies_dict3 = dict(response3.cookies)
                 cookies_list3 = [{"name": name, "value": value} for name, value in cookies_dict3.items()]
