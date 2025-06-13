@@ -313,7 +313,7 @@ for username in usernames:
                                     log_file.write(f"{username}:{password}\n")
                                 break
                             else:
-                                print(f"{YELLOW}[-] Failed to authenticate with {username}, didn't check if user exists")   
+                                print(f"{YELLOW}[-] Failed to authenticate with {username} with password {password}, didn't check if user exists")   
 
             except httpx.ReadTimeout:
                 print(f"{RED}[✗] Request timed out while checking user: {username}{RESET}")
