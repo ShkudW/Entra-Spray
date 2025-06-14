@@ -11,7 +11,7 @@ The tool recreates the real Microsoft login flow to check:
 -  Argument (-ProxyTor) for route all traffic vit TOR (renew ip after every 7 min..) - This feature comes to solve the problem of False Positive
    Settings adjustment required before using this argument
 
-## Install:
+### Install:
 
 ```bash
 pip install httpx
@@ -24,9 +24,9 @@ pip install stem
 Entra-Spray.py [-h] -user username@doamin.com | path-to-usernames-file -pass password | path-to-passwords-file  [-check] [-ProxyTor]
 ```
 
-### Usage with TOR:
+## Usage with TOR:
 
-## Install:
+### Install:
 
 ```bash
 sudo apt update
