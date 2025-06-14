@@ -197,7 +197,6 @@ for username in usernames:
                 "Sec-Ch-Ua": '"Chromium";v="137", "Not/A)Brand";v="24"',
                 "Hpgact": "1800",
                 "Sec-Ch-Ua-Mobile": "?0",
-                "Client-Request-Id": "392cfe57-cd73-4e1e-a3e4-768e5dc0574c",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
                 "Accept": "application/json",
                 "Hpgrequestid": "79994791-4414-40de-9014-ef5533da1700",
@@ -219,14 +218,8 @@ for username in usernames:
                     with httpx.Client(timeout=20, http2=True ) as client:
                         response = client.post(url99, headers=headers99, json=payload99)
                         if '"FederationRedirectUrl"' in response.text:
-                            try:
-                                federation_url = response.json().get("FederationRedirectUrl")
-                                if federation_url:
-                                    print(f"{BLUE}[!] Can not enumeration if username is exist {RESET}")
-                            except Exception:
-                                print(f"{RED}[✗] Unexpected error occurred{RESET}")
-                                pass
-
+                            print(f"{BLUE}[!] Can not enumeration if username is exist {RESET}")
+                            continue
                         if '"IfExistsResult":0' in response.text:
                             pass
                         else:
