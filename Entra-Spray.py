@@ -28,7 +28,7 @@ parser = argparse.ArgumentParser(
     epilog="Example usage:\n"
            "  python3 Entrra-Spray.py -user users.txt -pass passwords.txt\n"
            "  python3 Entrra-Spray.py -user username@domain.com -pass 'X' -check\n"
-           "  python3 Entrra-Spray.py -user u@d.com -pass 'X' -check -proxytor",
+           "  python3 Entrra-Spray.py -user u@d.com -pass 'X' -check -proxy tor",
     formatter_class=argparse.RawTextHelpFormatter
 )
 
@@ -364,9 +364,6 @@ for username in usernames:
             except Exception:
                 print(f"{RED}[✗] Unexpected error occurred{RESET}")
             
-             
-            print(f"{BLUE} seccess Logs written to valid-users.txt {RESET}")
-            
             
         else :
             #first action - login:
@@ -648,4 +645,4 @@ for username in usernames:
                 print(f"{RED}[✗] Unexpected error occurred{RESET}")
             
              
-            print(f"{CYAN} seccess Logs written to valid-users.txt {RESET}")
+print(f"{CYAN} seccess Logs written to valid-users.txt {RESET}")
