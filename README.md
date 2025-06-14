@@ -6,9 +6,9 @@ The tool recreates the real Microsoft login flow to check:
 2. Whether the password is correct
 3. Whether there is a reference to a Federated Domain where passwords cannot be checked
 
- Main capabilities:
-✅ Argument (-Check) for checking if user ideneoty exsit in Tenant (after muliple requests it might be False Positive) 
-✅ Argument (-ProxyTor) for route all traffic vit TOR (renew ip after every 7 min..)
+## Main capabilities:
+- Argument (-Check) for checking if user ideneoty exsit in Tenant (after muliple requests it might be False Positive)
+-  Argument (-ProxyTor) for route all traffic vit TOR (renew ip after every 7 min..)
 
 
 
