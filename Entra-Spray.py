@@ -647,5 +647,5 @@ for username in usernames:
 print("")
 print("")           
 print("----------------------------")
-print(f"{BACKGROUNG_CYAN} Valid users and seccessfully logged in written to valid-users.txt {RESET}")
+print(f"{BACKGROUNG_CYAN} Valid users and successful authentications written to valid-users.txt {RESET}")
 print("")
