@@ -11,7 +11,7 @@ import os
 
 RESET = "\033[0m"
 YELLOW = "\033[93m"
-CYAN = "\033[36m[36m]"
+CYAN = "\033[36m"
 BOLD_YELLOW = "\033[1;33m"
 BOLD_BLACK = "\033[1;31m"
 BOLD_GREEN = "\033[1;33m"
