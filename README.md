@@ -15,7 +15,7 @@ The tool recreates the real Microsoft login flow to check:
 
 ```bash
 pip install httpx
-pip install httpx[HTTPS]
+pip install httpx[http2]
 pip install httpx[socks]
 pip install stem
 ```
