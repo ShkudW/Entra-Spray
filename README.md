@@ -64,5 +64,6 @@ sudo apt install libtorsocks0 -y
   ```bash
   netstat -tulpen | grep 9050
   torsocks curl https://api.ipify.org
+  torsocks curl https://check.torproject.org | grep -i "Congratulations"
   ```
 
