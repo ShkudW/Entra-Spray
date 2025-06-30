@@ -21,7 +21,8 @@ pip install stem
 ```
 
 ```python
-Entra-Spray.py [-h] -user username@doamin.com | path-to-usernames-file -pass password | path-to-passwords-file  [-check] [-ProxyTor]
+Entra-Spray.py [-h] -user username@doamin.com | path-to-usernames-file -pass password | path-to-passwords-file  [-check] [-ProxyTor] # authentication to Microsoft
+Entra-Spray.py [-h] -user username@doamin.com | path-to-usernames-file  [-check] [-ProxyTor] # Just for user validation
 ```
 
 ## Usage with TOR:
