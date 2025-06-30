@@ -13,8 +13,8 @@ RESET = "\033[0m"
 YELLOW = "\033[0;93m"
 CYAN = "\033[0;36m"
 BOLD_YELLOW = "\033[1;33m"
-BOLD_BLACK = "\033[1;31m"
-BOLD_GREEN = "\033[1;33m"
+BOLD_RED = "\033[1;31m"
+BOLD_GREEN = "\033[1;32m"
 BOLD_RED = "\033[1;31m"
 BACKGROUNG_YELLOW = "\033[0;43m"
 BACKGROUNG_CYAN = "\033[0;46m"
@@ -47,6 +47,7 @@ args = parser.parse_args()
 usernames = load_list(args.user)
 if args.password:
     passwords = load_list(args.password)
+    
 proxies = None
 
 
@@ -56,7 +57,7 @@ def get_tor_ip():
             ip = client.get("https://check.torproject.org/api/ip").text.strip()
             print(f"{YELLOW}[i] Current TOR IP: {ip}{RESET}")
     except Exception as e:
-        print(f"{BOLD_BLACK}[✗] Could not retrieve TOR IP: {e}{RESET}")
+        print(f"{BOLD_RED}[✗] Could not retrieve TOR IP: {e}{RESET}")
 
 def renew_tor_ip():
     global last_ip_renewal
@@ -68,7 +69,7 @@ def renew_tor_ip():
             print(f"{BOLD_YELLOW}[✓] Renewed TOR IP{RESET}")
             get_tor_ip()
     except Exception as e:
-        print(f"{BOLD_BLACK}[✗] Failed to renew TOR IP: {e}{RESET}")
+        print(f"{BOLD_RED}[✗] Failed to renew TOR IP: {e}{RESET}")
         
 transport = None
 if args.proxytor:
@@ -88,7 +89,7 @@ if args.password is None:
         if args.proxytor and transport and time.time() - last_ip_renewal >= renew_interval:
             renew_tor_ip()
             
-            #Login url Using Proxy:
+
             url_login = "https://login.microsoftonline.com/"
             headers_login = {
                 "Host": "login.microsoftonline.com",
@@ -126,15 +127,15 @@ if args.password is None:
                         print(f"{var_name}: not found")
     
             except httpx.ReadTimeout:
-                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_login}{RESET}")
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_login}{RESET}")
             except httpx.RequestError as e:
-                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
                 
                 
-                
-            #getting urls Using Proxy:
+                #Sec action - Getting 2 urls (with proxy):
+    
             url_geturls = "https://www.office.com/login"
             headers_geturls = {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
@@ -160,14 +161,14 @@ if args.password is None:
                 cookie_header = cookie_header.strip().rstrip(";")
     
             except httpx.ReadTimeout:
-                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
             except httpx.RequestError as e:
-                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
     
     
-            #getting parameters Using Proxy:
+                #third action - Getting Cookies and Body Parametrs from url1+url2 (with proxy):
             headers_ulrs = {
                 "Host": "login.microsoftonline.com",
                 "Cookie": cookie_header,
@@ -219,14 +220,14 @@ if args.password is None:
                 flowtoken = match_flow.group(1) if match_flow else None
     
             except httpx.ReadTimeout:
-                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
             except httpx.RequestError as e:
-                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
                 
                 
-            #Check id User Exist (with proxy):
+                #Check id User Exist (with proxy):
             url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
             headers_UserExsit = {
                 "Host": "login.microsoftonline.com",
@@ -261,6 +262,8 @@ if args.password is None:
                                 continue
                             if '"IfExistsResult":0' in response_UserExsit.text:
                                 print(f"{BOLD_GREEN}[✗] Username: {username} is exists{RESET}")
+                                with open("valid-users.txt", "a") as log_file:
+                                    log_file.write(f"{username}\n")
                                 pass
                             else:
                                 print(f"{BOLD_RED}[✗] Username: {username} not exists{RESET}")
@@ -275,14 +278,13 @@ if args.password is None:
                         continue
             
             except httpx.ReadTimeout:
-                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
             except httpx.RequestError as e:
-                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
                     
         else:
-            #Login url Witoput Proxy:
             url_login = "https://login.microsoftonline.com/"
             headers_login = {
                 "Host": "login.microsoftonline.com",
@@ -320,14 +322,14 @@ if args.password is None:
                         print(f"{var_name}: not found")
     
             except httpx.ReadTimeout:
-                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_login}{RESET}")
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_login}{RESET}")
             except httpx.RequestError as e:
-                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
                 
                 
-           #Getting Urls Witoput Proxy:
+   
             url_geturls = "https://www.office.com/login"
             headers_geturls = {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
@@ -353,14 +355,14 @@ if args.password is None:
                 cookie_header = cookie_header.strip().rstrip(";")
     
             except httpx.ReadTimeout:
-                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
             except httpx.RequestError as e:
-                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
     
     
-            #Getting parameters Witoput Proxy:
+
             headers_ulrs = {
                 "Host": "login.microsoftonline.com",
                 "Cookie": cookie_header,
@@ -412,14 +414,14 @@ if args.password is None:
                 flowtoken = match_flow.group(1) if match_flow else None
     
             except httpx.ReadTimeout:
-                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
             except httpx.RequestError as e:
-                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
                 
                 
-            #Check id User Exist (with proxy):
+                #Check id User Exist (with proxy):
             url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
             headers_UserExsit = {
                 "Host": "login.microsoftonline.com",
@@ -454,6 +456,8 @@ if args.password is None:
                                 continue
                             if '"IfExistsResult":0' in response_UserExsit.text:
                                 print(f"{BOLD_GREEN}[✗] Username: {username} is exists{RESET}")
+                                with open("valid-users.txt", "a") as log_file:
+                                    log_file.write(f"{username}\n")
                                 continue
                             else:
                                 print(f"{BOLD_RED}[✗] Username: {username} not exists{RESET}")
@@ -468,11 +472,11 @@ if args.password is None:
                         continue
             
             except httpx.ReadTimeout:
-                print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
             except httpx.RequestError as e:
-                print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
             except Exception:
-                print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
             
 
 
@@ -523,11 +527,11 @@ if args.password:
                             print(f"{var_name}: not found")
     
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_login}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_login}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
                 
                 
                 #Sec action - Getting 2 urls (with proxy):
@@ -557,11 +561,11 @@ if args.password:
                     cookie_header = cookie_header.strip().rstrip(";")
     
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
     
     
                 #third action - Getting Cookies and Body Parametrs from url1+url2 (with proxy):
@@ -616,11 +620,11 @@ if args.password:
                     flowtoken = match_flow.group(1) if match_flow else None
     
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
                 
                 
                 #Check id User Exist (with proxy):
@@ -671,11 +675,11 @@ if args.password:
                             continue
             
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
                     
                 
                  #Final Request - POST with username and password (with proxy):
@@ -747,20 +751,20 @@ if args.password:
                                         print(f"{BOLD_RED}[-] Failed to authenticate with {username} with password {password}, didn't check if user exists{RESET}")   
     
                     except httpx.ReadTimeout:
-                        print(f"{BOLD_BLACK}[✗] Request timed out while checking user: {username}{RESET}")
+                        print(f"{BOLD_RED}[✗] Request timed out while checking user: {username}{RESET}")
                         continue
     
                     except httpx.RequestError as e:
-                        print(f"{BOLD_BLACK}[✗] Request error for {username}: {e}{RESET}")
+                        print(f"{BOLD_RED}[✗] Request error for {username}: {e}{RESET}")
                         continue
                    
                 
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_check_password}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_check_password}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_check_password} {RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_check_password} {RESET}")
                 
                 
             else :
@@ -803,11 +807,11 @@ if args.password:
                             print(f"{var_name}: not found")
     
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_login}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_login}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
                 
                 
                 #Sec action - Getting 2 urls:
@@ -837,11 +841,11 @@ if args.password:
                     cookie_header = cookie_header.strip().rstrip(";")
     
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
     
     
                 #third action - Getting Cookies and Body Parametrs from url1+url2:
@@ -896,11 +900,11 @@ if args.password:
                     flowtoken = match_flow.group(1) if match_flow else None
     
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
                 
                 
                 #Check id User Exist:
@@ -951,11 +955,11 @@ if args.password:
                             continue
             
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
                     
                 
                  #Final Request - POST with username and password:
@@ -1027,20 +1031,20 @@ if args.password:
                                         print(f"{BOLD_RED}[-] Failed to authenticate with {username} with password {password}, didn't check if user exists{RESET}")   
     
                     except httpx.ReadTimeout:
-                        print(f"{BOLD_BLACK}[✗] Request timed out while checking user: {username}{RESET}")
+                        print(f"{BOLD_RED}[✗] Request timed out while checking user: {username}{RESET}")
                         continue
     
                     except httpx.RequestError as e:
-                        print(f"{BOLD_BLACK}[✗] Request error for {username}: {e}{RESET}")
+                        print(f"{BOLD_RED}[✗] Request error for {username}: {e}{RESET}")
                         continue
                    
                 
                 except httpx.ReadTimeout:
-                    print(f"{BOLD_BLACK}[✗] Timeout occurred while connecting to {url_check_password}{RESET}")
+                    print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_check_password}{RESET}")
                 except httpx.RequestError as e:
-                    print(f"{BOLD_BLACK}[✗] Request error: {e}{RESET}")
+                    print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
-                    print(f"{BOLD_BLACK}[✗] Unexpected error occurred while connecting to {url_check_password} {RESET}")
+                    print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_check_password} {RESET}")
 
 print("")
 print("")           
