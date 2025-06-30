@@ -25,6 +25,11 @@ Entra-Spray.py [-h] -user username@doamin.com | path-to-usernames-file -pass pas
 Entra-Spray.py [-h] -user username@doamin.com | path-to-usernames-file  [-check] [-ProxyTor] # Just for user validation
 ```
 
+
+![image](https://github.com/user-attachments/assets/baa14085-3a35-4274-92ed-71f0128bf0d8)
+
+![image](https://github.com/user-attachments/assets/2980cfe7-a85e-4b4a-9e27-6b0f17846704)
+
 ## Usage with TOR:
 
 ### Install:
