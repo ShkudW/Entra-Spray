@@ -23,7 +23,7 @@ def generate_combinations(firstname, lastname):
     }
     return combinations
 
-def process_names_file(input_path, output_path, style):
+def process_names_file(input_path, output_path, style, tenantname):
     with open(input_path, "r") as infile, open(output_path, "w") as outfile:
         for line in infile:
             if not line.strip():
@@ -35,14 +35,15 @@ def process_names_file(input_path, output_path, style):
             combos = generate_combinations(firstname, lastname)
             if style == "all":
                 for value in sorted(set(combos.values())):
-                    print(value)
-                    outfile.write(f"{value}\n")
+                    username = value + tenantname if tenantname else value
+                    print(username)
+                    outfile.write(f"{username}\n")
             elif style in combos:
-                print(combos[style])
-                outfile.write(f"{combos[style]}\n")
+                username = combos[style] + tenantname if tenantname else combos[style]
+                print(username)
+                outfile.write(f"{username}\n")
             else:
-                print(f"[!] Style '{style}' is not supported. Fuck: {firstname} {lastname}")
-
+                print(f"[!] Style '{style}' is not supported. Skipping: {firstname} {lastname}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate username combinations from name list")
@@ -50,5 +51,6 @@ if __name__ == "__main__":
     parser.add_argument("-output", required=True, help="Path to output TXT file")
     parser.add_argument("-style", required=True,
         help="Combination style (first, last, firstlast, first.last, last.first, lastfirst, firstL, lastF, firstL2, firstL3, lastF2, lastF3, fl, lf, l.first, f.last, first.l, last.f, all)")
+    parser.add_argument("-tenantname", required=False, default="", help="Tenant domain suffix (e.g. @ggg.com)")
     args = parser.parse_args()
-    process_names_file(args.input, args.output, args.style)
+    process_names_file(args.input, args.output, args.style, args.tenantname)
