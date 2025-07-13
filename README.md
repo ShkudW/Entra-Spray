@@ -27,6 +27,10 @@ Entra-Spray.py [-h] -user username@doamin.com | path-to-usernames-file  [-check]
 Entra-Spray.py [-h] -firstname Shaked -lastname Wiessman -tenantname Shak.com [-ProxyTor] # for Finding the vaild combination
 ```
 
+Using UserName-Combain.py:
+```python
+UserName-Combain.py -input namestxt -output username.txt -tenantname shak.com -style firstl | first | last | firstlast | first.last | last.first | lastfirst | firstL | lastF | firstL2 | firstL3 | lastF2 | lastF3 | fl | lf | l.first | f.last | first.l | last.f | all 
+```
 
 ![image](https://github.com/user-attachments/assets/baa14085-3a35-4274-92ed-71f0128bf0d8)
 
