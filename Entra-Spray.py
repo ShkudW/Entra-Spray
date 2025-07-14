@@ -1145,7 +1145,6 @@ if args.password:
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password} - MFA required but not configured \n")
                                         break
-
                                     elif pageid == "ConvergedTFA":
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required {RESET}")
                                         with open("valid-users.txt", "a") as log_file:
@@ -1157,7 +1156,12 @@ if args.password:
                                             log_file.write(f"{username}:{password} \n")                                   
                                         break            
                                 else:
-                                    if "<html><head><title>Working...</title></head>" in response_check_password.text:
+                                    if pageid == "ConvergedChangePassword":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and Password needs updating: {password} {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - Password needs updating \n")
+                                        break
+                                    elif "<html><head><title>Working...</title></head>" in response_check_password.text:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password}\n")
@@ -1175,7 +1179,6 @@ if args.password:
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password} - MFA required but not configured \n")
                                         break
-
                                     elif pageid == "ConvergedTFA":
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required {RESET}")
                                         with open("valid-users.txt", "a") as log_file:
@@ -1185,9 +1188,14 @@ if args.password:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password} {RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password} \n")                                   
-                                        break                   
+                                        break                    
                                 else:
-                                    if "<html><head><title>Working...</title></head>" in response_check_password.text:
+                                    if pageid == "ConvergedChangePassword":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and Password needs updating: {password} {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - Password needs updating \n")
+                                        break
+                                    elif "<html><head><title>Working...</title></head>" in response_check_password.text:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password}\n")
@@ -1451,7 +1459,6 @@ if args.password:
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password} - MFA required but not configured \n")
                                         break
-
                                     elif pageid == "ConvergedTFA":
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required {RESET}")
                                         with open("valid-users.txt", "a") as log_file:
@@ -1461,9 +1468,14 @@ if args.password:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password} {RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password} \n")                                   
-                                        break                  
+                                        break                 
                                 else:
-                                    if "<html><head><title>Working...</title></head>" in response_check_password.text:
+                                    if pageid == "ConvergedChangePassword":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and Password needs updating: {password} {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - Password needs updating \n")
+                                        break
+                                    elif "<html><head><title>Working...</title></head>" in response_check_password.text:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password}\n")
@@ -1480,19 +1492,23 @@ if args.password:
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password} - MFA required but not configured \n")
                                         break
-
                                     elif pageid == "ConvergedTFA":
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password}, MFA required {RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password} - MFA required \n")
-                                        break
+                                        break   
                                     else:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist, and seccessfully logged in with password: {password} {RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password} \n")                                   
                                         break                    
                                 else:
-                                    if "<html><head><title>Working...</title></head>" in response_check_password.text:
+                                    if pageid == "ConvergedChangePassword":
+                                        print(f"{BOLD_GREEN}[✓] User {username} is exist, and Password needs updating: {password} {RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password} - Password needs updating \n")
+                                        break
+                                    elif "<html><head><title>Working...</title></head>" in response_check_password.text:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist and logged in with password: {password}  with redirect to federation server{RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password}\n")
