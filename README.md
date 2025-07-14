@@ -32,9 +32,20 @@ Using UserName-Combain.py:
 UserName-Combain.py -input names.txt -output username.txt -tenantname @shak.com -style firstl | first | last | firstlast | first.last | last.first | lastfirst | firstL | lastF | firstL2 | firstL3 | lastF2 | lastF3 | fl | lf | l.first | f.last | first.l | last.f | all 
 ```
 
-![image](https://github.com/user-attachments/assets/baa14085-3a35-4274-92ed-71f0128bf0d8)
+<img width="1374" height="164" alt="image" src="https://github.com/user-attachments/assets/54f20eec-2899-429d-9e6b-12c3f5703744" />
 
-![image](https://github.com/user-attachments/assets/2980cfe7-a85e-4b4a-9e27-6b0f17846704)
+<img width="1165" height="171" alt="image" src="https://github.com/user-attachments/assets/eb224b87-ab49-4b8f-9f84-0d3d11ab211c" />
+
+<img width="1323" height="155" alt="image" src="https://github.com/user-attachments/assets/b507524c-e681-4a31-bd63-366dad4f8e4e" />
+
+<img width="1348" height="146" alt="image" src="https://github.com/user-attachments/assets/d4c33afb-92b5-47d6-ba85-62f5c84f5c8b" />
+
+<img width="1397" height="158" alt="image" src="https://github.com/user-attachments/assets/09b80662-a916-4701-8a37-acad264e5425" />
+
+<img width="1404" height="164" alt="image" src="https://github.com/user-attachments/assets/630588b2-bba4-498d-8e02-833f8ad6d3f7" />
+
+<img width="1374" height="164" alt="image" src="https://github.com/user-attachments/assets/681ab882-dbbe-41d0-8944-248fe43ac764" />
+
 
 ## Usage with TOR:
 
