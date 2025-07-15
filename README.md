@@ -37,7 +37,7 @@ the tenant and the upns is a part of a LAB enviroment in Entra ID :]
 [✗] Username: shakedw@entraspraytenant.onmicrosoft.com is not exists
 [✗] Username: shakedwi@entraspraytenant.onmicrosoft.com is not exists
 [✗] Username: shakedwie@entraspraytenant.onmicrosoft.com is not exists
-[✓] Username: shakedwiessman@entraspraytenant.onmicrosoft.com is exists
+[✓] Username: shakedwiessman@entraspraytenant.onmicrosoft.com is exists   <--
 ```
 
 #### Checking If User Exist:
