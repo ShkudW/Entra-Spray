@@ -51,7 +51,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -check
  Valid users and successful authentications written to valid-users.txt
 ```
 
-Checking If User Exist with TOR routing (-proxytor flag):
+#### Checking If User Exist with TOR routing (-proxytor flag):
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -check -proxytor
 
@@ -66,7 +66,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -check -proxytor
  Valid users and successful authentications written to valid-users.txt
 ```
 
-Preforming Password Spray Attack:
+#### Preforming Password Spray Attack:
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456'
 
@@ -79,7 +79,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456'
  Valid users and successful authentications written to valid-users.txt
 ```
 
-Preforming Password Spray Attack with '-check' flag:
+#### Preforming Password Spray Attack with '-check' flag:
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check
 
@@ -92,7 +92,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check
  Valid users and successful authentications written to valid-users.txt
 ```
 
-Preforming Password Spray Attack with '-check' flag and with TOR routing:
+#### Preforming Password Spray Attack with '-check' flag and with TOR routing:
 The script will check if:
 - The user is required to have MFA but has not yet set it up
 - The user is required to have MFA
