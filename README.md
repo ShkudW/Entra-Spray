@@ -39,6 +39,15 @@ the tenant and the upns is a part of a LAB enviroment in Entra ID :]
 Checking If User Exist:
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -check
+
+[✗] Username: shoshi@mytenant.onmicrosoft.com is exists
+[✗] Username: david@mytenant.onmicrosoft.com is exists
+[✗] Username: normuser@mytenant.onmicrosoft.com is exists
+[✗] Username: shakedwiessman@mytenant.onmicrosoft.com is exists
+
+
+----------------------------
+ Valid users and successful authentications written to valid-users.txt
 ```
 <img width="1374" height="164" alt="image" src="https://github.com/user-attachments/assets/54f20eec-2899-429d-9e6b-12c3f5703744" />
 
