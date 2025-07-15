@@ -41,14 +41,14 @@ the tenant and the upns is a part of a LAB enviroment in Entra ID :]
 ```python
 (Entra-Spray) root@Machine# python3 Entra-Spray.py -firstname shaked -lastname wiessman -tenantname entraspraytenant.onmicrosoft.com
 
-[✗] Username: s.wiessman@menorrait.onmicrosoft.com is not exists
-[✗] Username: shaked@menorrait.onmicrosoft.com is not exists
-[✗] Username: shaked.w@menorrait.onmicrosoft.com is not exists
-[✗] Username: shaked.wiessman@menorrait.onmicrosoft.com is not exists
-[✗] Username: shakedw@menorrait.onmicrosoft.com is not exists
-[✗] Username: shakedwi@menorrait.onmicrosoft.com is not exists
-[✗] Username: shakedwie@menorrait.onmicrosoft.com is not exists
-[✓] Username: shakedwiessman@menorrait.onmicrosoft.com is exists
+[✗] Username: s.wiessman@entraspraytenant.onmicrosoft.com is not exists
+[✗] Username: shaked@entraspraytenant.onmicrosoft.com is not exists
+[✗] Username: shaked.w@entraspraytenant.onmicrosoft.com is not exists
+[✗] Username: shaked.wiessman@entraspraytenant.onmicrosoft.com is not exists
+[✗] Username: shakedw@entraspraytenant.onmicrosoft.com is not exists
+[✗] Username: shakedwi@entraspraytenant.onmicrosoft.com is not exists
+[✗] Username: shakedwie@entraspraytenant.onmicrosoft.com is not exists
+[✓] Username: shakedwiessman@entraspraytenant.onmicrosoft.com is exists
 ```
 
 #### Checking If User Exist:
