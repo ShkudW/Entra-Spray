@@ -36,6 +36,21 @@ UserName-Combain.py -input names.txt -output username.txt -tenantname @shak.com 
 
 the tenant and the upns is a part of a LAB enviroment in Entra ID :]
 
+#### Chekcing id User Exisy by First Name and Last Name:
+
+```python
+(Entra-Spray) root@Machine# python3 Entra-Spray.py -firstname shaked -lastname wiessman -tenantname entraspraytenant.onmicrosoft.com
+
+[✗] Username: s.wiessman@menorrait.onmicrosoft.com is not exists
+[✗] Username: shaked@menorrait.onmicrosoft.com is not exists
+[✗] Username: shaked.w@menorrait.onmicrosoft.com is not exists
+[✗] Username: shaked.wiessman@menorrait.onmicrosoft.com is not exists
+[✗] Username: shakedw@menorrait.onmicrosoft.com is not exists
+[✗] Username: shakedwi@menorrait.onmicrosoft.com is not exists
+[✗] Username: shakedwie@menorrait.onmicrosoft.com is not exists
+[✓] Username: shakedwiessman@menorrait.onmicrosoft.com is exists
+```
+
 #### Checking If User Exist:
 ```python
 (Entra-Spray) root@Machine# python3 Entra-Spray.py -user list-of-usernames.txt -check
