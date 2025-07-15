@@ -36,7 +36,7 @@ UserName-Combain.py -input names.txt -output username.txt -tenantname @shak.com 
 
 the tenant and the upns is a part of a LAB enviroment in Entra ID :]
 
-Checking If User Exist:
+#### Checking If User Exist:
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -check
 
