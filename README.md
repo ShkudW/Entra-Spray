@@ -28,8 +28,9 @@ the tenant and the upns is a part of a LAB enviroment in Entra ID :]
 #### Chekcing if User Exist by First Name and Last Name:
 
 ```python
-(Entra-Spray) root@Machine# python3 Entra-Spray.py -firstname shaked -lastname wiessman -tenantname entraspraytenant.onmicrosoft.com
+(Entra-Spray) root@Machine# python3 Entra-Spray.py -firstname shaked -lastname wiessman -tenantname entraspraytenant.onmicrosoft.com -proxytor
 
+[i] Current TOR IP: {"IsTor":true,"IP":"5.255.103.235"}   <--
 [✗] Username: s.wiessman@entraspraytenant.onmicrosoft.com is not exists
 [✗] Username: shaked@entraspraytenant.onmicrosoft.com is not exists
 [✗] Username: shaked.w@entraspraytenant.onmicrosoft.com is not exists
