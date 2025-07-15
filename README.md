@@ -21,17 +21,6 @@ pip install httpx[socks]
 pip install stem
 ```
 
-```python
-Entra-Spray.py [-h] -user username@doamin.com | path-to-usernames-file -pass password | path-to-passwords-file  [-check] [-ProxyTor] # authentication to Microsoft
-Entra-Spray.py [-h] -user username@doamin.com | path-to-usernames-file  [-check] [-ProxyTor] # Just for user validation
-Entra-Spray.py [-h] -firstname Shaked -lastname Wiessman -tenantname Shak.com [-ProxyTor] # for Finding the vaild combination
-```
-
-Using UserName-Combain.py:
-```python
-UserName-Combain.py -input names.txt -output username.txt -tenantname @shak.com -style firstl | first | last | firstlast | first.last | last.first | lastfirst | firstL | lastF | firstL2 | firstL3 | lastF2 | lastF3 | fl | lf | l.first | f.last | first.l | last.f | all 
-```
-
 ### Usage:
 
 the tenant and the upns is a part of a LAB enviroment in Entra ID :]
