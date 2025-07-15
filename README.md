@@ -8,7 +8,7 @@ The tool recreates the real Microsoft login flow to check:
 
 ## Main capabilities:
 -  Argument (-Check) for checking if user identity exsit in Tenant (after muliple requests it might be False Positive)
--  Argument (-ProxyTor) for route all traffic vit TOR (renew ip after every 7 min..) - This feature comes to solve the problem of False Positive
+-  Argument (-ProxyTor) for route all traffic vit TOR (renew ip after every 4 min..) - This feature comes to solve the problem of False Positive
    Settings adjustment required before using this argument
 - Argument (-firstname) and (-lastname) and (-tenantname) for make combination from employee's name until finding the vaild user
 
