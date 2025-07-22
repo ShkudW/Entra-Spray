@@ -88,6 +88,7 @@ Cool Tool For Enumeration and Validation User Accounts in Entra ID :]
 if args.user:
     usernames = load_list(args.user)
     
+    
 if args.password:
     passwords = load_list(args.password)
 
@@ -135,6 +136,37 @@ if args.proxytor:
 with open("valid-users.txt", "w") as f:
     pass
 
+def get_tenant_id(first_email):      
+    if "@" in first_email:
+        domain = first_email.split("@")[1]
+        url_domain = f"https://login.microsoftonline.com/{domain}/.well-known/openid-configuration"
+        headers_domain = {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        }
+        try:
+            with httpx.Client(timeout=20, http2=True, headers=headers_domain, follow_redirects=False) as client:
+                response_domain = client.get(url_domain)
+                response_domain.raise_for_status()
+                data = response_domain.json()
+                issuer = data.get("issuer", "")
+                if not issuer or len(issuer.split("/")) < 4:
+                    return None
+
+                tenant_id = issuer.split("/")[3]
+                return tenant_id
+
+        except httpx.HTTPError as e:
+            #print(f"HTTP Error: {e}")
+            return None
+        except (KeyError, IndexError) as e:
+            #print(f"Key/Index Error: {e}")
+            return None
+    else:
+        print("No user file provided")
+        return None
+    
+   
 
 
 ########################################################################################################################
@@ -501,6 +533,17 @@ if args.firstname and args.lastname and args.tenantname and args.user is None an
 #New Function of Checking vaild user account
 
 if args.user and args.check and args.password is None and args.firstname is None and args.lastname is None and args.tenantname is None:
+    user = usernames[0]
+    Tenant = get_tenant_id(user)
+    if Tenant is None:
+        print(f"{BOLD_RED}Tenant ID Not Found Can't continue{RESET}")
+        print(" ")
+        sys.exit(1)
+    else:
+        print(f"{BOLD_YELLOW}Tenant ID Found: {Tenant}{RESET}")
+        print("--------------------------------")
+        print(" ")
+        
     for username in usernames:
         if args.proxytor and transport and time.time() - last_ip_renewal >= renew_interval:
             renew_tor_ip()
@@ -899,6 +942,17 @@ if args.user and args.check and args.password is None and args.firstname is None
 
 
 if args.password:
+    user = usernames[0]
+    Tenant = get_tenant_id(user)
+    if Tenant is None:
+        print(f"{BOLD_RED}Tenant ID Not Found Can't continue{RESET}")
+        print(" ")
+        sys.exit(1)
+    else:
+        print(f"{BOLD_YELLOW}Tenant ID Found: {Tenant}{RESET}")
+        print("--------------------------------")
+        print(" ")
+        
     for username in usernames:
         for password in passwords:
             if args.proxytor and time.time() - last_ip_renewal >= renew_interval:
