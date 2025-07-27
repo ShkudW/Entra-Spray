@@ -77,8 +77,8 @@ Cool Tool For Enumeration and Validation User Accounts in Entra ID :]
 
     python3 Entrra-Spray.py -user /home/usernames.txt | singleusername@domain.com -password /home/passwords.txt | SingleP@SSSw0rd -check
     python3 Entrra-Spray.py -user /home/usernames.txt | singleusername@domain.com -password /home/passwords.txt | SingleP@SSSw0rd -check -proxytor
-    python3 Entrra-Spray.py -firstname Anheuser -lastname Busch -tenantname ab-inbev.com
-    python3 Entrra-Spray.py -firstname Anheuser -lastname Busch -tenantname ab-inbev.com -proxytor
+    python3 Entrra-Spray.py -firstname Shaked -lastname Wiessman -tenantname mydomain.com -check
+    python3 Entrra-Spray.py -firstname Shaked -lastname Wiessman -tenantname mydomain.com -check -proxytor
 
 """)
     parser.print_help()
